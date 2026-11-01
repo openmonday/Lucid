@@ -1,14 +1,14 @@
 export const DEFAULT_TARGET = "zh-Hans";
 export const LANGUAGES: [string, string][] = [
-  ["zh-Hans", "简体中文"],
-  ["zh-Hant", "繁體中文"],
+  ["zh-Hans", "Chinese (Simplified)"],
+  ["zh-Hant", "Chinese (Traditional)"],
   ["en", "English"],
-  ["ja", "日本語"],
-  ["ko", "한국어"],
-  ["fr", "Français"],
-  ["de", "Deutsch"],
-  ["es", "Español"],
-  ["ru", "Русский"],
+  ["ja", "Japanese"],
+  ["ko", "Korean"],
+  ["fr", "French"],
+  ["de", "German"],
+  ["es", "Spanish"],
+  ["ru", "Russian"],
 ];
 
 export const DEFAULT_THEME = "default";

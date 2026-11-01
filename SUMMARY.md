@@ -19,7 +19,7 @@ Chrome and Firefox extension for bilingual page translation using Microsoft Tran
 - Clean blue/white/gray icon (bilingual card concept)
 
 ## Visual Design
-- **Icon:** Blue background with white card (文) and gray card (A)
+- **Icon:** Blue background with white card (CJK glyph) and gray card (A)
 - **Translation text:** Inherits page text color at 82% opacity with blue left border
 - **Dark mode:** Automatic via `prefers-color-scheme`
 - **Loading state:** Shimmer animation
@@ -78,7 +78,7 @@ Adapted from `agent/plugins/pi-bridge/src/core/translator.ts`. Uses Microsoft ne
 53f8d49 Change icon to blue/white/gray theme; update translation border to blue
 3608ba1 Add INSTALL-FIREFOX.md with clear installation steps for Firefox and Zen
 14cc40b Minimal flat icon; fix Firefox install steps
-f8a3293 Update icon to show bilingual concept (文/A cards); change translation text to inherit page color with auto dark mode
+f8a3293 Update icon to show bilingual concept (CJK glyph and A cards); change translation text to inherit page color with auto dark mode
 709bb99 Add manual testing checklist for Firefox
 19138f2 Add Firefox/Zen build (shares source, different manifest)
 602ebf2 Add Firefox/Zen build target
