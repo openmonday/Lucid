@@ -58,3 +58,41 @@ Firefox requires extensions to be signed by Mozilla for permanent installation.
 - **Host permissions:** declared for `bing.com`, but Firefox prompts the user on first translation request
 - **Background:** persistent event page, not a service worker
 - **Manifest:** V3 with `browser_specific_settings.gecko`
+
+## Manual Testing
+
+I haven't tested the Firefox build fully. Here's a checklist:
+
+1. **Build and load:**
+   ```bash
+   npm run build:firefox
+   ```
+   Open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on** → select `dist-firefox/manifest.json`
+
+2. **Web page translation:**
+   - Open any web page
+   - Press **Alt+A**
+   - Translation lines should appear below each paragraph in clay/orange color
+   - Press **Alt+A** again to remove them
+
+3. **Options:**
+   - Click the gear icon next to the extension on `about:addons`
+   - Change target language and save
+   - Translations should use the new language after toggling again
+
+4. **Local HTML:**
+   - Open a local `.html` file
+   - Press **Alt+A**
+   - Should translate (no permission required in Firefox)
+
+5. **Markdown viewer:**
+   - Open a local `.md` file
+   - Should open the extension's viewer page
+   - Drag the `.md` file onto the viewer or use the file picker
+   - The viewer should render the Markdown
+   - Press **Alt+A** to translate the rendered page
+
+6. **Dark mode:**
+   - Set Firefox to dark mode in preferences
+   - Reload a translated page or the viewer
+   - Colors should adapt (dark surface, lighter text, different clay tone)
