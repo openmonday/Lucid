@@ -49,8 +49,9 @@ async function toggle(tab?: chrome.tabs.Tab) {
   try {
     await chrome.tabs.sendMessage(tab.id, { type: "toggle" } satisfies Request);
   } catch {
-    // No receiver: either the page is restricted or a file:// page without file access.
-    if (tab.url?.startsWith("file://") && !(await chrome.extension.isAllowedFileSchemeAccess())) {
+    // No receiver: either the page is restricted or a file:// page without file access (Chrome only).
+    const canCheck = typeof chrome.extension?.isAllowedFileSchemeAccess === "function";
+    if (canCheck && tab.url?.startsWith("file://") && !(await chrome.extension.isAllowedFileSchemeAccess())) {
       await chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` });
     }
   }
