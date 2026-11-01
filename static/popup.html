@@ -15,9 +15,10 @@
   </style>
 </head>
 <body>
-  <header><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="11" height="11" rx="2"/><path d="M8.5 7v3M7 8.5h3M13 13l8 8M17 13l-4 4"/></svg><h1>Bilingual Translate</h1><span class="key">Alt+A</span></header>
+  <header><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="11" height="11" rx="2"/><path d="M8.5 7v3M7 8.5h3M13 13l8 8M17 13l-4 4"/></svg><h1>Toolbox</h1><span class="key">Alt+A</span></header>
   <div class="card"><div class="route"><div class="select">Auto detect</div><div class="arrow">→</div><select id="target" class="select"></select></div></div>
   <div class="card"><button id="toggle" class="primary">Translate</button></div>
+  <div class="card"><button id="dark" class="primary">Dark mode: Auto</button></div>
   <div class="card"><div class="section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>Translation</span></div><div class="row" data-theme-group="translationTheme"><button class="theme" data-theme="default"><strong><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/></svg>Plain</strong><small>Subtle</small><div class="swatch"></div></button><button class="theme" data-theme="claude"><strong><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 18 12 4l7 14M8 13h8"/></svg>Claude</strong><small>Warm</small><div class="swatch"></div></button></div></div>
   <div class="card"><div class="section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg><span>Viewer</span></div><div class="row" data-theme-group="viewerTheme"><button class="theme" data-theme="default"><strong>Plain</strong><small>Neutral</small><div class="swatch"></div></button><button class="theme" data-theme="claude"><strong>Claude</strong><small>Warm</small><div class="swatch"></div></button></div></div>
   <script type="module" src="popup.js"></script>

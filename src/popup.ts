@@ -34,3 +34,15 @@ groups.forEach(group => {
 });
 
 void load();
+
+const dark = document.getElementById("dark")!;
+async function loadDark() {
+  const value = await chrome.storage.sync.get({ darkMode: true });
+  dark.textContent = value.darkMode === false ? "Dark mode: Off" : "Dark mode: Auto";
+}
+dark.addEventListener("click", async () => {
+  const value = await chrome.storage.sync.get({ darkMode: true });
+  await chrome.storage.sync.set({ darkMode: value.darkMode === false });
+  void loadDark();
+});
+void loadDark();

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Bilingual Translate",
+  "name": "Toolbox",
   "version": "0.1.0",
-  "description": "Bilingual page translation (Microsoft Translator). Works on local HTML and Markdown files.",
+  "description": "Web translation, Markdown viewing, and automatic dark mode.",
   "minimum_chrome_version": "120",
   "permissions": [
     "storage",
