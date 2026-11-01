@@ -5,87 +5,163 @@
   <meta name="color-scheme" content="light dark">
   <title>Toolbox</title>
   <style>
-    :root{color-scheme:light dark;--bg:#f4f4f2;--card:#fff;--soft:#ececea;--text:#1b1b1b;--sub:#6b6b68;--line:rgba(0,0,0,.08);--accent:#1a73e8;--accent-ink:#fff;--shadow:0 1px 2px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.08);--r:14px}
-    @media(prefers-color-scheme:dark){:root{--bg:#121212;--card:#1e1e1e;--soft:#2a2a2a;--text:#f1f1ef;--sub:#9b9b97;--line:rgba(255,255,255,.09);--accent:#5a9bff;--accent-ink:#0b1b33;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.45)}}
+    :root{
+      color-scheme:light dark;
+      --bg:#f6f7f9;--card:#fff;--soft:#eef0f3;--soft-hover:#e6e9ee;
+      --text:#1b1d21;--sub:#71757c;--line:rgba(0,0,0,.07);
+      --accent:#1a62e8;--accent-2:#4f8bff;--accent-ink:#fff;--accent-soft:rgba(26,98,232,.1);
+      --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(16,24,40,.08);
+      --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+      --r:16px;--r-sm:11px;
+    }
+    @media(prefers-color-scheme:dark){:root{
+      --bg:#131417;--card:#1d1f23;--soft:#282b31;--soft-hover:#31343b;
+      --text:#f1f2f4;--sub:#9a9ea6;--line:rgba(255,255,255,.08);
+      --accent:#5a9bff;--accent-2:#7cb0ff;--accent-ink:#0a1627;--accent-soft:rgba(90,155,255,.16);
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.5);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+    }}
     *{box-sizing:border-box;margin:0;padding:0}
-    body{width:300px;min-height:380px;padding:12px;background:var(--bg);color:var(--text);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    body{width:320px;padding:14px;background:var(--bg);color:var(--text);
+      font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
     button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
-    svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-    header{display:flex;align-items:center;gap:8px;padding:2px 4px 12px}
-    header svg{color:var(--accent);width:22px;height:22px}
-    h1{flex:1;font-size:15px;font-weight:650}
-    kbd{font:600 10px/1 inherit;padding:4px 6px;border-radius:7px;background:var(--soft);color:var(--sub)}
-    .panel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:10px}
-    .route{display:flex;align-items:center;gap:8px;padding:8px}
-    .chip{height:36px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;border-radius:11px;background:var(--soft);white-space:nowrap}
-    .chip.fixed{width:92px;color:var(--sub)}
-    .route>svg{color:var(--sub);width:16px;height:16px}
+    svg{display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+    /* header */
+    header{display:flex;align-items:center;gap:10px;padding:2px 2px 14px}
+    .logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent-2),var(--accent));box-shadow:var(--shadow-sm);flex:none}
+    .logo svg{width:19px;height:19px;stroke:#fff;stroke-width:2}
+    .brand{flex:1;min-width:0}
+    .brand h1{font-size:15px;font-weight:650;letter-spacing:-.2px}
+    .brand p{font-size:11px;color:var(--sub);margin-top:1px}
+    .icon-btn{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--sub);transition:background .15s,color .15s}
+    .icon-btn:hover{background:var(--soft);color:var(--text)}
+    .icon-btn svg{width:17px;height:17px}
+
+    /* primary action */
+    .go{position:relative;width:100%;height:50px;display:flex;align-items:center;justify-content:center;gap:9px;
+      border-radius:var(--r);background:linear-gradient(135deg,var(--accent-2),var(--accent));color:var(--accent-ink);
+      font-weight:650;font-size:14.5px;box-shadow:var(--shadow);margin-bottom:14px;
+      transition:filter .15s,transform .07s,box-shadow .15s}
+    .go svg{width:19px;height:19px;stroke:currentColor;stroke-width:2}
+    .go:hover{filter:brightness(1.06)}
+    .go:active{transform:scale(.985)}
+
+    /* language route */
+    .route{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:var(--r);
+      box-shadow:var(--shadow-sm),0 0 0 1px var(--line);padding:9px;margin-bottom:12px}
+    .chip{height:38px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 13px;
+      border-radius:var(--r-sm);background:var(--soft);white-space:nowrap;font-weight:550}
+    .chip.fixed{width:84px;color:var(--sub);gap:7px}
+    .chip.fixed svg{width:15px;height:15px}
+    .route .sep{color:var(--sub);width:17px;height:17px}
     .dd{position:relative;flex:1;min-width:0}
-    .dd-btn{width:100%;justify-content:space-between;font-weight:550}
+    .dd-btn{width:100%;justify-content:space-between;transition:background .15s}
+    .dd-btn:hover{background:var(--soft-hover)}
     .dd-btn span{overflow:hidden;text-overflow:ellipsis}
-    .dd-btn svg{width:14px;height:14px;color:var(--sub);transition:transform .15s}
-    .dd.open .dd-btn svg{transform:rotate(180deg)}
-    .menu{position:absolute;z-index:5;top:42px;right:0;width:200px;max-height:196px;overflow:auto;padding:5px;border-radius:14px;background:var(--card);box-shadow:var(--shadow),0 0 0 1px var(--line);display:none}
-    .dd.open .menu{display:block}
-    .menu button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;border-radius:9px;text-align:left}
+    .dd-btn .caret{width:15px;height:15px;color:var(--sub);transition:transform .18s}
+    .dd.open .dd-btn .caret{transform:rotate(180deg)}
+    .menu{position:absolute;z-index:5;top:46px;right:0;width:214px;max-height:216px;overflow:auto;
+      padding:6px;border-radius:14px;background:var(--card);box-shadow:var(--shadow),0 0 0 1px var(--line);display:none}
+    .dd.open .menu{display:block;animation:pop .14s ease-out}
+    @keyframes pop{from{opacity:0;transform:translateY(-4px)}}
+    .menu button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 11px;
+      border-radius:9px;text-align:left;transition:background .12s}
     .menu button:hover{background:var(--soft)}
     .menu button.sel{color:var(--accent);font-weight:600}
-    .menu button svg{width:14px;height:14px;opacity:0}
-    .menu button.sel svg{opacity:1}
-    .go{width:100%;height:44px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);font-weight:650;font-size:14px;box-shadow:var(--shadow);margin-bottom:10px;transition:filter .15s,transform .06s}
-    .go:hover{filter:brightness(1.07)}.go:active{transform:scale(.985)}
-    .line{display:flex;align-items:center;gap:10px;padding:11px 12px}
-    .line>svg{color:var(--sub)}
-    .line b{flex:1;font-weight:550}
-    .switch{position:relative;width:40px;height:24px;border-radius:12px;background:var(--soft);transition:background .2s}
-    .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
-    .switch.on{background:var(--accent)}.switch.on::after{transform:translateX(16px)}
-    .seg-row{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px}
-    .seg-row>svg{color:var(--sub)}
-    .seg{flex:1;display:flex;gap:3px;padding:3px;border-radius:12px;background:var(--soft)}
-    .seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:30px;border-radius:9px;color:var(--sub);font-weight:550;transition:background .15s,color .15s}
-    .seg button.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)}
-    .dot{width:10px;height:10px;border-radius:5px;background:#8c8c88}
+    .menu button .tick{width:15px;height:15px;opacity:0}
+    .menu button.sel .tick{opacity:1}
+
+    /* settings section */
+    .group-label{display:flex;align-items:center;gap:7px;padding:2px 6px 8px;color:var(--sub);
+      font-size:11px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+    .group-label svg{width:13px;height:13px}
+    .group{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow-sm),0 0 0 1px var(--line);
+      overflow:hidden;margin-bottom:12px}
+    .row{display:flex;align-items:center;gap:11px;padding:11px 13px}
+    .row+.row{border-top:1px solid var(--line)}
+    .row>.ri{color:var(--sub);width:17px;height:17px}
+    .row .label{flex:1;min-width:0}
+    .row .label b{display:block;font-weight:550}
+    .row .label small{color:var(--sub);font-size:11px}
+
+    /* toggle switch */
+    .switch{position:relative;width:42px;height:25px;border-radius:13px;background:var(--soft);
+      transition:background .22s;flex:none}
+    .switch::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;
+      background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .22s}
+    .switch.on{background:var(--accent)}
+    .switch.on::after{transform:translateX(17px)}
+
+    /* segmented control */
+    .seg{display:flex;gap:3px;padding:3px;border-radius:12px;background:var(--soft);flex:none}
+    .seg button{display:flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 13px;
+      border-radius:9px;color:var(--sub);font-weight:550;transition:background .15s,color .15s,box-shadow .15s}
+    .seg button.active{background:var(--card);color:var(--text);box-shadow:var(--shadow-sm)}
+    .dot{width:10px;height:10px;border-radius:50%;background:#8c8f95}
     [data-theme=claude] .dot{background:#d8795b}
   </style>
 </head>
 <body>
   <header>
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2.5"/><rect x="13" y="3" width="8" height="8" rx="2.5"/><rect x="3" y="13" width="8" height="8" rx="2.5"/><rect x="13" y="13" width="8" height="8" rx="2.5"/></svg>
-    <h1>Toolbox</h1>
-    <kbd>Alt+A</kbd>
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M4 7h7M7.5 7v10M5 17c2.5-1 4-3 4.5-6M9.5 11c.5 3 2 5 4.5 6"/><path d="M13 20l4-9 4 9M14.5 17h5"/></svg>
+    </div>
+    <div class="brand">
+      <h1>Toolbox</h1>
+      <p>Bilingual translation</p>
+    </div>
+    <button class="icon-btn" id="open-settings" type="button" title="All settings" aria-label="All settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
+    </button>
   </header>
 
-  <div class="panel route">
-    <div class="chip fixed">Auto</div>
-    <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  <button class="go" id="toggle" type="button">
+    <svg viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 9c1 3 3 5 6 6M12 9c-1 3-3 5-6 6M13 20l4-9 4 9M14.5 17h5"/></svg>
+    Translate this page
+  </button>
+
+  <div class="route">
+    <div class="chip fixed">
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.5 6.5a16 16 0 0 0 15 0M4.5 17.5a16 16 0 0 1 15 0"/></svg>
+      Auto
+    </div>
+    <svg class="sep" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     <div class="dd" id="dd">
-      <button class="chip dd-btn" id="dd-btn" type="button"><span id="dd-label"></span><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+      <button class="chip dd-btn" id="dd-btn" type="button">
+        <span id="dd-label"></span>
+        <svg class="caret" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
       <div class="menu" id="menu" role="listbox"></div>
     </div>
   </div>
 
-  <button class="go" id="toggle" type="button"><svg viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 9c1 3 3 5 6 6M12 9c-1 3-3 5-6 6M13 20l4-9 4 9M14.5 17h5"/></svg>Translate</button>
-
-  <div class="panel line">
-    <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
-    <b>Dark mode</b>
-    <button class="switch" id="dark-switch" type="button" aria-label="Dark mode"></button>
+  <div class="group-label">
+    <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 1 0 0 20c1.4 0 2-1 2-2 0-.7-.4-1.3-.9-1.8-.5-.5-.6-1.2-.1-1.7.3-.3.7-.5 1.1-.5H16a6 6 0 0 0 6-6c0-4.4-4.5-8-10-8Z"/></svg>
+    Appearance
   </div>
-
-  <div class="panel seg-row">
-    <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
-    <div class="seg" data-theme-group="translationTheme">
-      <button type="button" data-theme="default"><i class="dot"></i>Plain</button>
-      <button type="button" data-theme="claude"><i class="dot"></i>Claude</button>
+  <div class="group">
+    <div class="row">
+      <svg class="ri" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+      <span class="label"><b>Dark mode</b><small>Auto-darken web pages</small></span>
+      <button class="switch" id="dark-switch" type="button" aria-label="Dark mode"></button>
     </div>
-  </div>
-
-  <div class="panel seg-row">
-    <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-    <div class="seg" data-theme-group="viewerTheme">
-      <button type="button" data-theme="default"><i class="dot"></i>Plain</button>
-      <button type="button" data-theme="claude"><i class="dot"></i>Claude</button>
+    <div class="row">
+      <svg class="ri" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      <span class="label"><b>Translation style</b></span>
+      <div class="seg" data-theme-group="translationTheme">
+        <button type="button" data-theme="default"><i class="dot"></i>Plain</button>
+        <button type="button" data-theme="claude"><i class="dot"></i>Claude</button>
+      </div>
+    </div>
+    <div class="row">
+      <svg class="ri" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span class="label"><b>Markdown viewer</b></span>
+      <div class="seg" data-theme-group="viewerTheme">
+        <button type="button" data-theme="default"><i class="dot"></i>Plain</button>
+        <button type="button" data-theme="claude"><i class="dot"></i>Claude</button>
+      </div>
     </div>
   </div>
 

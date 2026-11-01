@@ -1,6 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <rect width="128" height="128" rx="28" fill="#1a73e8"/>
-  <path d="M78 18a40 40 0 1 0 32 64A35 35 0 1 1 78 18Z" fill="#fff"/>
-  <circle cx="91" cy="38" r="7" fill="#e8eaed"/>
-  <path d="M85 91h22M96 80v22" stroke="#3c4043" stroke-width="7" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f8bff"/>
+      <stop offset="1" stop-color="#1a62e8"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef3fb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- rounded app tile -->
+  <rect width="128" height="128" rx="30" fill="url(#bg)"/>
+  <rect width="128" height="128" rx="30" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width="1.5"/>
+
+  <!-- source glyph: letter A on the blue field -->
+  <path d="M26 82 L41 40 h9 L65 82 h-11 l-2.8-8.8 h-12.2 L36.5 82 Z M39.9 51 L35.7 64 h9.1 Z"
+        fill="#ffffff" fill-opacity=".95"/>
+
+  <!-- target card: a rounded tile with a clean CJK-style mark -->
+  <g transform="translate(57 44)">
+    <rect width="54" height="54" rx="15" fill="url(#card)"/>
+    <path d="M14 16 h26 M27 16 v24 M19 27 h16 M19 36 h16"
+          fill="none" stroke="#1a62e8" stroke-width="4"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

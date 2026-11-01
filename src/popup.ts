@@ -47,6 +47,12 @@ document.getElementById("toggle")!.addEventListener("click", () => {
   window.close();
 });
 
+// ---- open full settings ----
+document.getElementById("open-settings")!.addEventListener("click", () => {
+  void chrome.runtime.openOptionsPage();
+  window.close();
+});
+
 // ---- dark mode switch ----
 const darkSwitch = document.getElementById("dark-switch")!;
 async function loadDark() {
