@@ -37,7 +37,7 @@ See INSTALL-FIREFOX.md for:
 
 ## Known Gaps
 1. Firefox build has not been tested in Firefox or Zen
-2. `.md` redirect in Firefox sends to viewer without file path (needs manual file picker)
+2. `.md` redirect and the viewer loading `file://` files are untested in Firefox
 3. Icon is only verified at 128px; 16px toolbar size unchecked
 4. Host permission prompt behavior in Firefox unverified
 5. Git committer identity auto-configured (set `user.name` and `user.email` if needed)

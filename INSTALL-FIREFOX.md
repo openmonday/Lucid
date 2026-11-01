@@ -87,7 +87,7 @@ Submit to AMO for public distribution. Manual review takes days to weeks. Users 
 - Press **Alt+A** to toggle bilingual translation on any page
 - Change target language: click the gear icon on `about:addons` next to the extension
 - Works on `file://` URLs without requiring special permissions (unlike Chrome)
-- Local `.md` files open in the extension's viewer automatically
+- Local `.md` files should redirect to the extension's viewer (untested in Firefox). If not, open `viewer.html` and use its file picker.
 
 ## Zen Browser Notes
 
