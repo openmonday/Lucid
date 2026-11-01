@@ -3,24 +3,92 @@
 <head>
   <meta charset="utf-8">
   <meta name="color-scheme" content="light dark">
-  <title>Bilingual Translate</title>
+  <title>Toolbox</title>
   <style>
-    :root{color-scheme:light dark;--bg:#f7f7f6;--panel:#fff;--soft:#f0f0ef;--text:#202020;--muted:#777;--line:#ddd;--accent:#b52d60;--accent-hover:#c83c70}
-    @media(prefers-color-scheme:dark){:root{--bg:#171717;--panel:#242424;--soft:#303030;--text:#eee;--muted:#999;--line:#414141;--accent:#b52d60;--accent-hover:#c83c70}}
-    *{box-sizing:border-box}body{width:320px;margin:0;padding:14px 16px 16px;background:var(--bg);color:var(--text);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    header{display:flex;align-items:center;gap:9px;margin-bottom:14px}header svg{width:22px;height:22px;color:#1a73e8}h1{font-size:14px;margin:0;font-weight:600;flex:1}.key{color:var(--muted);font-size:11px}
-    .card{background:var(--panel);border:1px solid color-mix(in srgb,var(--line) 55%,transparent);border-radius:11px;padding:11px;margin-bottom:9px}.route{display:grid;grid-template-columns:1fr 22px 1fr;gap:7px;align-items:center}.select{background:var(--soft);border:0;border-radius:8px;padding:9px;color:var(--text);font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;width:100%;text-align:center;text-align-last:center}.arrow{text-align:center;color:var(--muted);font-size:17px}
-    .primary{width:100%;border:0;border-radius:8px;padding:10px;background:var(--accent);color:#fff;font-weight:600;font-size:14px;cursor:pointer}.primary:hover{background:var(--accent-hover)}
-    .section{display:flex;align-items:center;gap:7px;margin:1px 1px 8px;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.section svg{width:14px;height:14px}.row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.theme{min-width:0;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--soft);color:var(--text);text-align:left;cursor:pointer}.theme.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}.theme:hover{border-color:var(--muted)}.theme strong{display:flex;align-items:center;gap:6px;font-size:12px}.theme svg{width:14px;height:14px}.theme small{display:block;color:var(--muted);margin-top:3px;font-size:10px}.swatch{height:3px;border-radius:2px;margin-top:7px;background:#888}.theme[data-theme=claude] .swatch{background:#d8795b}
+    :root{color-scheme:light dark;--bg:#f4f4f2;--card:#fff;--soft:#ececea;--text:#1b1b1b;--sub:#6b6b68;--line:rgba(0,0,0,.08);--accent:#1a73e8;--accent-ink:#fff;--shadow:0 1px 2px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.08);--r:14px}
+    @media(prefers-color-scheme:dark){:root{--bg:#121212;--card:#1e1e1e;--soft:#2a2a2a;--text:#f1f1ef;--sub:#9b9b97;--line:rgba(255,255,255,.09);--accent:#5a9bff;--accent-ink:#0b1b33;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.45)}}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{width:300px;min-height:380px;padding:12px;background:var(--bg);color:var(--text);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+    svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+    header{display:flex;align-items:center;gap:8px;padding:2px 4px 12px}
+    header svg{color:var(--accent);width:22px;height:22px}
+    h1{flex:1;font-size:15px;font-weight:650}
+    kbd{font:600 10px/1 inherit;padding:4px 6px;border-radius:7px;background:var(--soft);color:var(--sub)}
+    .panel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:10px}
+    .route{display:flex;align-items:center;gap:8px;padding:8px}
+    .chip{height:36px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;border-radius:11px;background:var(--soft);white-space:nowrap}
+    .chip.fixed{width:92px;color:var(--sub)}
+    .route>svg{color:var(--sub);width:16px;height:16px}
+    .dd{position:relative;flex:1;min-width:0}
+    .dd-btn{width:100%;justify-content:space-between;font-weight:550}
+    .dd-btn span{overflow:hidden;text-overflow:ellipsis}
+    .dd-btn svg{width:14px;height:14px;color:var(--sub);transition:transform .15s}
+    .dd.open .dd-btn svg{transform:rotate(180deg)}
+    .menu{position:absolute;z-index:5;top:42px;right:0;width:200px;max-height:196px;overflow:auto;padding:5px;border-radius:14px;background:var(--card);box-shadow:var(--shadow),0 0 0 1px var(--line);display:none}
+    .dd.open .menu{display:block}
+    .menu button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;border-radius:9px;text-align:left}
+    .menu button:hover{background:var(--soft)}
+    .menu button.sel{color:var(--accent);font-weight:600}
+    .menu button svg{width:14px;height:14px;opacity:0}
+    .menu button.sel svg{opacity:1}
+    .go{width:100%;height:44px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);font-weight:650;font-size:14px;box-shadow:var(--shadow);margin-bottom:10px;transition:filter .15s,transform .06s}
+    .go:hover{filter:brightness(1.07)}.go:active{transform:scale(.985)}
+    .line{display:flex;align-items:center;gap:10px;padding:11px 12px}
+    .line>svg{color:var(--sub)}
+    .line b{flex:1;font-weight:550}
+    .switch{position:relative;width:40px;height:24px;border-radius:12px;background:var(--soft);transition:background .2s}
+    .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+    .switch.on{background:var(--accent)}.switch.on::after{transform:translateX(16px)}
+    .seg-row{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px}
+    .seg-row>svg{color:var(--sub)}
+    .seg{flex:1;display:flex;gap:3px;padding:3px;border-radius:12px;background:var(--soft)}
+    .seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:30px;border-radius:9px;color:var(--sub);font-weight:550;transition:background .15s,color .15s}
+    .seg button.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    .dot{width:10px;height:10px;border-radius:5px;background:#8c8c88}
+    [data-theme=claude] .dot{background:#d8795b}
   </style>
 </head>
 <body>
-  <header><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="11" height="11" rx="2"/><path d="M8.5 7v3M7 8.5h3M13 13l8 8M17 13l-4 4"/></svg><h1>Toolbox</h1><span class="key">Alt+A</span></header>
-  <div class="card"><div class="route"><div class="select">Auto detect</div><div class="arrow">→</div><select id="target" class="select"></select></div></div>
-  <div class="card"><button id="toggle" class="primary">Translate</button></div>
-  <div class="card"><button id="dark" class="primary">Dark mode: Auto</button></div>
-  <div class="card"><div class="section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>Translation</span></div><div class="row" data-theme-group="translationTheme"><button class="theme" data-theme="default"><strong><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/></svg>Plain</strong><small>Subtle</small><div class="swatch"></div></button><button class="theme" data-theme="claude"><strong><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 18 12 4l7 14M8 13h8"/></svg>Claude</strong><small>Warm</small><div class="swatch"></div></button></div></div>
-  <div class="card"><div class="section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg><span>Viewer</span></div><div class="row" data-theme-group="viewerTheme"><button class="theme" data-theme="default"><strong>Plain</strong><small>Neutral</small><div class="swatch"></div></button><button class="theme" data-theme="claude"><strong>Claude</strong><small>Warm</small><div class="swatch"></div></button></div></div>
+  <header>
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2.5"/><rect x="13" y="3" width="8" height="8" rx="2.5"/><rect x="3" y="13" width="8" height="8" rx="2.5"/><rect x="13" y="13" width="8" height="8" rx="2.5"/></svg>
+    <h1>Toolbox</h1>
+    <kbd>Alt+A</kbd>
+  </header>
+
+  <div class="panel route">
+    <div class="chip fixed">Auto</div>
+    <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <div class="dd" id="dd">
+      <button class="chip dd-btn" id="dd-btn" type="button"><span id="dd-label"></span><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="menu" id="menu" role="listbox"></div>
+    </div>
+  </div>
+
+  <button class="go" id="toggle" type="button"><svg viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 9c1 3 3 5 6 6M12 9c-1 3-3 5-6 6M13 20l4-9 4 9M14.5 17h5"/></svg>Translate</button>
+
+  <div class="panel line">
+    <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+    <b>Dark mode</b>
+    <button class="switch" id="dark-switch" type="button" aria-label="Dark mode"></button>
+  </div>
+
+  <div class="panel seg-row">
+    <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+    <div class="seg" data-theme-group="translationTheme">
+      <button type="button" data-theme="default"><i class="dot"></i>Plain</button>
+      <button type="button" data-theme="claude"><i class="dot"></i>Claude</button>
+    </div>
+  </div>
+
+  <div class="panel seg-row">
+    <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <div class="seg" data-theme-group="viewerTheme">
+      <button type="button" data-theme="default"><i class="dot"></i>Plain</button>
+      <button type="button" data-theme="claude"><i class="dot"></i>Claude</button>
+    </div>
+  </div>
+
   <script type="module" src="popup.js"></script>
 </body>
 </html>

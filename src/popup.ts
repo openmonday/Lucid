@@ -1,19 +1,68 @@
 import { DEFAULT_TARGET, DEFAULT_THEME, LANGUAGES } from "./shared";
 
-const target = document.getElementById("target") as HTMLSelectElement;
-for (const [code, name] of LANGUAGES) target.add(new Option(name, code));
-chrome.storage.sync.get({ target: DEFAULT_TARGET }).then(v => { target.value = v.target as string; });
-target.addEventListener("change", () => chrome.storage.sync.set({ target: target.value }));
+const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>';
 
+// ---- language dropdown ----
+const dd = document.getElementById("dd")!;
+const ddBtn = document.getElementById("dd-btn")!;
+const ddLabel = document.getElementById("dd-label")!;
+const menu = document.getElementById("menu")!;
+let target = DEFAULT_TARGET;
+
+function renderTarget() {
+  ddLabel.textContent = LANGUAGES.find(([code]) => code === target)?.[1] ?? target;
+  menu.querySelectorAll<HTMLButtonElement>("button").forEach(b => b.classList.toggle("sel", b.dataset.code === target));
+}
+
+for (const [code, name] of LANGUAGES) {
+  const item = document.createElement("button");
+  item.type = "button";
+  item.dataset.code = code;
+  item.setAttribute("role", "option");
+  item.innerHTML = `<span></span>${CHECK}`;
+  item.firstElementChild!.textContent = name;
+  item.addEventListener("click", async () => {
+    target = code;
+    renderTarget();
+    dd.classList.remove("open");
+    await chrome.storage.sync.set({ target });
+  });
+  menu.append(item);
+}
+
+ddBtn.addEventListener("click", e => {
+  e.stopPropagation();
+  dd.classList.toggle("open");
+  menu.querySelector(".sel")?.scrollIntoView({ block: "nearest" });
+});
+document.addEventListener("click", () => dd.classList.remove("open"));
+document.addEventListener("keydown", e => { if (e.key === "Escape") dd.classList.remove("open"); });
+
+chrome.storage.sync.get({ target: DEFAULT_TARGET }).then(v => { target = v.target as string; renderTarget(); });
+renderTarget();
+
+// ---- translate ----
 document.getElementById("toggle")!.addEventListener("click", () => {
   void chrome.runtime.sendMessage({ type: "toggle-active" });
   window.close();
 });
 
-const groups = document.querySelectorAll<HTMLDivElement>("[data-theme-group]");
-const keys = ["translationTheme", "viewerTheme"];
+// ---- dark mode switch ----
+const darkSwitch = document.getElementById("dark-switch")!;
+async function loadDark() {
+  const value = await chrome.storage.sync.get({ darkMode: true });
+  darkSwitch.classList.toggle("on", value.darkMode !== false);
+}
+darkSwitch.addEventListener("click", async () => {
+  const value = await chrome.storage.sync.get({ darkMode: true });
+  await chrome.storage.sync.set({ darkMode: value.darkMode === false });
+  void loadDark();
+});
 
-async function load() {
+// ---- theme segments ----
+const groups = document.querySelectorAll<HTMLDivElement>("[data-theme-group]");
+
+async function loadThemes() {
   const values = await chrome.storage.sync.get({ translationTheme: DEFAULT_THEME, viewerTheme: DEFAULT_THEME });
   groups.forEach(group => {
     const key = group.dataset.themeGroup!;
@@ -26,23 +75,11 @@ async function load() {
 groups.forEach(group => {
   group.querySelectorAll<HTMLButtonElement>("[data-theme]").forEach(button => {
     button.addEventListener("click", async () => {
-      const key = group.dataset.themeGroup!;
-      await chrome.storage.sync.set({ [key]: button.dataset.theme });
+      await chrome.storage.sync.set({ [group.dataset.themeGroup!]: button.dataset.theme });
       group.querySelectorAll("[data-theme]").forEach(item => item.classList.toggle("active", item === button));
     });
   });
 });
 
-void load();
-
-const dark = document.getElementById("dark")!;
-async function loadDark() {
-  const value = await chrome.storage.sync.get({ darkMode: true });
-  dark.textContent = value.darkMode === false ? "Dark mode: Off" : "Dark mode: Auto";
-}
-dark.addEventListener("click", async () => {
-  const value = await chrome.storage.sync.get({ darkMode: true });
-  await chrome.storage.sync.set({ darkMode: value.darkMode === false });
-  void loadDark();
-});
 void loadDark();
+void loadThemes();
