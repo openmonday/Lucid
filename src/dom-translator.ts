@@ -25,14 +25,13 @@ function ensureStyle() {
   const s = document.createElement("style");
   s.id = "bt-style";
   s.textContent = `
-.${CLASS}{display:block;margin:.35em 0 .7em;padding:.05em 0 .05em .75em;border-left:2px solid var(--bt-accent,#c6613f);
-color:var(--bt-text,#b4502f);font-size:.96em;line-height:1.6;font-weight:400;font-style:normal;text-decoration:none;text-align:left;
+.${CLASS}{display:block;margin:.35em 0 .7em;padding:.05em 0 .05em .75em;border-left:2px solid color-mix(in srgb,currentColor 28%,transparent);
+color:inherit;opacity:.82;font-size:.96em;line-height:1.6;font-weight:400;font-style:normal;text-decoration:none;text-align:left;
 text-indent:0;letter-spacing:normal;text-transform:none;white-space:normal}
-@media (prefers-color-scheme:dark){.${CLASS}{--bt-accent:#e08264;--bt-text:#eea68e}}
-.${CLASS}[data-state=loading]{border-left-color:transparent;color:transparent;border-radius:6px;min-height:1.3em;
+.${CLASS}[data-state=loading]{border-left-color:transparent;color:transparent;opacity:1;border-radius:6px;min-height:1.3em;
 background:linear-gradient(90deg,rgba(128,128,128,.12) 25%,rgba(128,128,128,.24) 50%,rgba(128,128,128,.12) 75%);background-size:200% 100%;
 animation:bt-shimmer 1.2s linear infinite}
-.${CLASS}[data-state=error]{border-left-color:#dc2626;color:#dc2626;font-size:.85em}
+.${CLASS}[data-state=error]{border-left-color:#dc2626;color:#dc2626;opacity:1;font-size:.85em}
 .${CLASS}:not([data-state]){animation:bt-in .25s ease-out}
 @keyframes bt-shimmer{to{background-position:-200% 0}}
 @keyframes bt-in{from{opacity:0;transform:translateY(-2px)}}

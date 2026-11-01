@@ -8,7 +8,8 @@ A browser extension for bilingual page translation using Microsoft Translator. W
 - Translates as you scroll — only visible blocks are sent to the translation engine
 - Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
 - Markdown viewer with drag-and-drop support
-- Clean, responsive design with light and dark mode
+- Clean, responsive design with automatic light and dark mode
+- Translation text uses page text color (dark gray in light mode, light gray in dark mode)
 - Translation cache stored locally
 - Target language configurable on the options page
 
