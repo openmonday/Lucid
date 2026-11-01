@@ -19,7 +19,8 @@ export const THEMES: [string, string][] = [
 
 export type Request =
   | { type: "translate"; texts: string[] }
-  | { type: "toggle" };
+  | { type: "toggle" }
+  | { type: "toggle-active" };
 export type TranslateResponse =
   | { ok: true; translations: string[] }
   | { ok: false; error: string };

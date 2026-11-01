@@ -1,3 +1,8 @@
+document.getElementById("toggle")!.addEventListener("click", () => {
+  void chrome.runtime.sendMessage({ type: "toggle-active" });
+  window.close();
+});
+
 const buttons = document.querySelectorAll<HTMLButtonElement>(".theme-btn");
 
 // Load current theme

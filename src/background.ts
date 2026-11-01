@@ -57,7 +57,9 @@ async function toggle(tab?: chrome.tabs.Tab) {
   }
 }
 chrome.commands.onCommand.addListener((command, tab) => { if (command === "toggle-translate") toggle(tab); });
-chrome.action.onClicked.addListener(tab => toggle(tab));
+chrome.runtime.onMessage.addListener((message: Request) => {
+  if (message?.type === "toggle-active") void toggle();
+});
 
 // ---- send local Markdown files to the viewer ----
 const viewer = (src: string) => chrome.runtime.getURL(`viewer.html?src=${encodeURIComponent(src)}`);

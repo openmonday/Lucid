@@ -12,6 +12,7 @@ const options = {
     content: "src/content.ts",
     viewer: "src/viewer.ts",
     options: "src/options.ts",
+    popup: "src/popup.ts",
   },
   outdir: "dist-firefox",
   bundle: true,

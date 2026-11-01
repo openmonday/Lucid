@@ -94,6 +94,11 @@
     .theme-btn[data-theme="claude"] .theme-preview {
       background: linear-gradient(90deg, #c6613f 0%, #e08264 100%);
     }
+    .primary {
+      width: 100%; padding: 9px 12px; border: 0; border-radius: 8px;
+      background: #1a73e8; color: #fff; font: 500 13px/1.2 inherit; cursor: pointer;
+    }
+    .primary:hover { filter: brightness(1.08); }
     .link {
       display: block;
       padding: 10px 12px;
@@ -131,6 +136,10 @@
   </div>
   
   <div class="section">
+    <button id="toggle" class="primary">Translate this page</button>
+  </div>
+
+  <div class="section">
     <div class="section-title">Theme</div>
     <div class="theme-grid">
       <button class="theme-btn" data-theme="default">
@@ -151,6 +160,6 @@
     <a href="viewer.html" target="_blank" class="link">📄 Markdown Viewer</a>
   </div>
 
-  <script src="popup.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
 </html>
