@@ -53,7 +53,7 @@ See [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md) for:
 
 ## Tips
 
-- **Keyboard shortcut:** Change it at `chrome://extensions/shortcuts` (Chrome) or extension settings (Firefox)
+- **Keyboard shortcut:** Change it at `chrome://extensions/shortcuts` (Chrome) or `about:addons` → ⚙️ → Manage Extension Shortcuts (Firefox)
 - **Local Markdown:** `.md` files automatically open in the viewer with drag-and-drop support
 - **Dark mode:** Switches automatically with your system theme
 - **Translation cache:** Stored locally for faster repeated translations
@@ -77,4 +77,5 @@ See [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md) for:
 
 **Markdown files download instead of opening in viewer**
 - The redirect works on file:// URLs
-- If it fails, open the viewer manually: click the extension icon or go to the viewer page directly
+- Chrome: make sure "Allow access to file URLs" is on, then reload the file.
+- Firefox/Zen: untested. Open the extension's `viewer.html` and use its file picker.
