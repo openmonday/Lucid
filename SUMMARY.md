@@ -14,8 +14,9 @@ Chrome and Firefox extension for bilingual page translation using Microsoft Tran
 - Lazy loading (translates only visible content)
 - Translation cache in local storage
 - Configurable target language (default: zh-Hans)
-- Auto dark mode support
-- Clean blue/white/gray icon
+- Two themes: Default (gray, subtle) and Claude (orange/clay, warm paper tones)
+- Auto dark mode support for both themes
+- Clean blue/white/gray icon (bilingual card concept)
 
 ## Visual Design
 - **Icon:** Blue background with white card (文) and gray card (A)

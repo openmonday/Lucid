@@ -23,7 +23,7 @@
 4. **Options:**
    - Click the extension icon or go to `chrome://extensions`
    - Click **Details** → **Extension options**
-   - Change target language and save
+   - Change target language and theme, changes apply immediately
 
 ## Firefox / Zen
 
