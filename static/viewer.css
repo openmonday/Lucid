@@ -33,6 +33,36 @@
   }
 }
 
+/* Claude theme: warm paper tones */
+html[data-bt-theme="claude"] {
+  --bg: #f8f6f3;
+  --surface: #ffffff;
+  --text: #2b2623;
+  --text-2: #5e5d59;
+  --muted: #87867f;
+  --border: #e5ddd1;
+  --border-strong: #d1cfc5;
+  --ghost: #f0ebe3;
+  --clay: #c6613f;
+  --clay-soft: #f5ebe6;
+  --code-bg: #2b2623;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-bt-theme="claude"] {
+    --bg: #1a1714;
+    --surface: #231f1a;
+    --text: #ececea;
+    --text-2: #c2c0b6;
+    --muted: #9c9a92;
+    --border: #332e28;
+    --border-strong: #5e5d59;
+    --ghost: #2a2521;
+    --clay: #e08264;
+    --clay-soft: #3a2a23;
+    --code-bg: #0d0b09;
+  }
+}
+
 * { box-sizing: border-box; }
 html { background: var(--bg); }
 body {

@@ -11,6 +11,12 @@ export const LANGUAGES: [string, string][] = [
   ["ru", "Русский"],
 ];
 
+export const DEFAULT_THEME = "default";
+export const THEMES: [string, string][] = [
+  ["default", "Default"],
+  ["claude", "Claude"],
+];
+
 export type Request =
   | { type: "translate"; texts: string[] }
   | { type: "toggle" };

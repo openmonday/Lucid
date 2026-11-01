@@ -1,4 +1,4 @@
-import { needsTranslation, type Request, type TranslateResponse } from "./shared";
+import { DEFAULT_THEME, needsTranslation, type Request, type TranslateResponse } from "./shared";
 
 const CLASS = "bt-t";
 const SKIP = "script,style,noscript,template,pre,textarea,input,select,svg,math,canvas,iframe,[contenteditable=''],[contenteditable='true'],[translate='no'],.notranslate,.bt-t";
@@ -29,15 +29,22 @@ function ensureStyle() {
 color:inherit;opacity:.82;font-size:.96em;line-height:1.6;font-weight:400;font-style:normal;text-decoration:none;text-align:left;
 text-indent:0;letter-spacing:normal;text-transform:none;white-space:normal}
 @media (prefers-color-scheme:dark){.${CLASS}{border-left-color:rgba(255,255,255,.18)}}
+html[data-bt-theme=claude] .${CLASS}{border-left-color:#c6613f;color:#b4502f;opacity:1}
+@media (prefers-color-scheme:dark){html[data-bt-theme=claude] .${CLASS}{border-left-color:#e08264;color:#eea68e}}
 .${CLASS}[data-state=loading]{border-left-color:transparent;color:transparent;opacity:1;border-radius:6px;min-height:1.3em;
 background:linear-gradient(90deg,rgba(128,128,128,.12) 25%,rgba(128,128,128,.24) 50%,rgba(128,128,128,.12) 75%);background-size:200% 100%;
 animation:bt-shimmer 1.2s linear infinite}
-.${CLASS}[data-state=error]{border-left-color:#dc2626;color:#dc2626;opacity:1;font-size:.85em}
+.${CLASS}[data-state=error],html[data-bt-theme=claude] .${CLASS}[data-state=error]{border-left-color:#dc2626;color:#dc2626;opacity:1;font-size:.85em}
 .${CLASS}:not([data-state]){animation:bt-in .25s ease-out}
 @keyframes bt-shimmer{to{background-position:-200% 0}}
 @keyframes bt-in{from{opacity:0;transform:translateY(-2px)}}
 @media (prefers-reduced-motion:reduce){.${CLASS}{animation:none!important}}`;
   document.head.append(s);
+}
+
+function applyTheme(theme: unknown) {
+  if (theme === "claude") document.documentElement.setAttribute("data-bt-theme", "claude");
+  else document.documentElement.removeAttribute("data-bt-theme");
 }
 
 function extract(el: Element): Unit | undefined {
@@ -164,6 +171,10 @@ function disable() {
 }
 
 export function installTranslator() {
+  chrome.storage.sync.get({ theme: DEFAULT_THEME }).then(({ theme }) => applyTheme(theme));
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "sync" && changes.theme) applyTheme(changes.theme.newValue);
+  });
   chrome.runtime.onMessage.addListener((message: Request) => {
     if (message?.type !== "toggle") return;
     if (enabled) disable(); else void enable();
