@@ -20,10 +20,10 @@
    - Press **Alt+A** to toggle translation
    - Translation lines appear below each paragraph
 
-4. **Options:**
-   - Click the extension icon or go to `chrome://extensions`
-   - Click **Details** → **Extension options**
-   - Change target language and theme, changes apply immediately
+4. **Theme & Options:**
+   - Click the extension icon to switch themes instantly
+   - Click **⚙️ Language Settings** in the popup to change target language
+   - All changes apply immediately, no page reload needed
 
 ## Firefox / Zen
 
