@@ -25,9 +25,10 @@ function ensureStyle() {
   const s = document.createElement("style");
   s.id = "bt-style";
   s.textContent = `
-.${CLASS}{display:block;margin:.35em 0 .7em;padding:.05em 0 .05em .75em;border-left:2px solid color-mix(in srgb,currentColor 28%,transparent);
+.${CLASS}{display:block;margin:.35em 0 .7em;padding:.05em 0 .05em .75em;border-left:2px solid rgba(0,0,0,.18);
 color:inherit;opacity:.82;font-size:.96em;line-height:1.6;font-weight:400;font-style:normal;text-decoration:none;text-align:left;
 text-indent:0;letter-spacing:normal;text-transform:none;white-space:normal}
+@media (prefers-color-scheme:dark){.${CLASS}{border-left-color:rgba(255,255,255,.18)}}
 .${CLASS}[data-state=loading]{border-left-color:transparent;color:transparent;opacity:1;border-radius:6px;min-height:1.3em;
 background:linear-gradient(90deg,rgba(128,128,128,.12) 25%,rgba(128,128,128,.24) 50%,rgba(128,128,128,.12) 75%);background-size:200% 100%;
 animation:bt-shimmer 1.2s linear infinite}
