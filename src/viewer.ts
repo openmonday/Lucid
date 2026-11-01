@@ -44,5 +44,5 @@ async function init() {
   }
 }
 
-installTranslator();
+installTranslator("viewerTheme");
 void init();

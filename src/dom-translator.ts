@@ -170,10 +170,10 @@ function disable() {
   seen = new WeakSet();
 }
 
-export function installTranslator() {
-  chrome.storage.sync.get({ theme: DEFAULT_THEME }).then(({ theme }) => applyTheme(theme));
+export function installTranslator(themeKey = "translationTheme") {
+  chrome.storage.sync.get({ [themeKey]: DEFAULT_THEME }).then(values => applyTheme(values[themeKey]));
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.theme) applyTheme(changes.theme.newValue);
+    if (area === "sync" && changes[themeKey]) applyTheme(changes[themeKey].newValue);
   });
   chrome.runtime.onMessage.addListener((message: Request) => {
     if (message?.type !== "toggle") return;

@@ -1,22 +1,31 @@
-document.getElementById("toggle")!.addEventListener("click", () => {
+import { DEFAULT_THEME } from "./shared";
+
+ document.getElementById("toggle")!.addEventListener("click", () => {
   void chrome.runtime.sendMessage({ type: "toggle-active" });
   window.close();
 });
 
-const buttons = document.querySelectorAll<HTMLButtonElement>(".theme-btn");
+const groups = document.querySelectorAll<HTMLDivElement>("[data-theme-group]");
+const keys = ["translationTheme", "viewerTheme"];
 
-// Load current theme
-chrome.storage.sync.get({ theme: "default" }, ({ theme }) => {
-  buttons.forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.theme === theme);
+async function load() {
+  const values = await chrome.storage.sync.get({ translationTheme: DEFAULT_THEME, viewerTheme: DEFAULT_THEME });
+  groups.forEach(group => {
+    const key = group.dataset.themeGroup!;
+    group.querySelectorAll<HTMLButtonElement>("[data-theme]").forEach(button => {
+      button.classList.toggle("active", button.dataset.theme === values[key]);
+    });
+  });
+}
+
+groups.forEach(group => {
+  group.querySelectorAll<HTMLButtonElement>("[data-theme]").forEach(button => {
+    button.addEventListener("click", async () => {
+      const key = group.dataset.themeGroup!;
+      await chrome.storage.sync.set({ [key]: button.dataset.theme });
+      group.querySelectorAll("[data-theme]").forEach(item => item.classList.toggle("active", item === button));
+    });
   });
 });
 
-// Handle theme change
-buttons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const newTheme = btn.dataset.theme!;
-    chrome.storage.sync.set({ theme: newTheme });
-    buttons.forEach(b => b.classList.toggle("active", b === btn));
-  });
-});
+void load();
