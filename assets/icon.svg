@@ -1,15 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#e58b6c"/>
-      <stop offset="1" stop-color="#c6613f"/>
-    </linearGradient>
-  </defs>
-  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
-  <!-- source card -->
-  <rect x="14" y="14" width="64" height="64" rx="14" fill="#fff"/>
-  <text x="46" y="63" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans CJK SC',sans-serif" font-size="46" font-weight="700" fill="#c6613f" text-anchor="middle">文</text>
-  <!-- translated card -->
-  <rect x="50" y="50" width="64" height="64" rx="14" fill="#1c1c1b" stroke="#e58b6c" stroke-width="4"/>
-  <text x="82" y="97" font-family="'Anthropic Sans Text',-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="700" fill="#fff" text-anchor="middle">A</text>
+  <rect width="128" height="128" rx="28" fill="#c6613f"/>
+  <text x="38" y="62" font-family="'PingFang SC','Hiragino Sans GB','Noto Sans CJK SC',sans-serif" font-size="56" font-weight="600" fill="#fff" text-anchor="middle">文</text>
+  <text x="90" y="108" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="56" font-weight="600" fill="#fff" fill-opacity=".72" text-anchor="middle">A</text>
 </svg>

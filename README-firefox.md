@@ -29,7 +29,9 @@ Firefox requires extensions to be signed by Mozilla for permanent installation.
 **Option 1: Developer Edition with signing disabled**
 - Install [Firefox Developer Edition](https://www.mozilla.org/firefox/developer/) or Nightly
 - Set `xpinstall.signatures.required` to `false` in `about:config`
-- Install from `about:addons` → ⚙️ → **Install Add-on From File** → choose `dist-firefox/manifest.json`
+- Zip the contents of `dist-firefox/` (`cd dist-firefox && zip -r ../bilingual-translate.xpi .`)
+- Install from `about:addons` → ⚙️ → **Install Add-on From File** → choose the `.xpi`
+- Stable Firefox and Zen may refuse unsigned add-ons even with this pref; use temporary loading or signing instead
 
 **Option 2: Self-distribution (unlisted)**
 - Create an account on [addons.mozilla.org](https://addons.mozilla.org)
