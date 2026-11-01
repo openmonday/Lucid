@@ -1,18 +1,18 @@
-# Bilingual Translate
+# Lucid
 
-A browser extension for bilingual page translation using Microsoft Translator. Works on web pages, local HTML files, and local Markdown files.
+A browser extension that makes web pages easier to read: bilingual translation, automatic dark mode, and a Markdown viewer. Works on web pages, local HTML files, and local Markdown files.
 
 ## Features
 
-- **Alt+A** toggles bilingual translation on the current page
+- **Alt+A** toggles bilingual translation on the current page (powered by Microsoft Translator)
 - Translates as you scroll — only visible blocks are sent to the translation engine
-- Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
+- Automatic dark mode that darkens any web page, following your system preference
 - Markdown viewer with drag-and-drop support
-- Clean, responsive design with automatic light and dark mode
-- Translation text uses page text color (dark gray in light mode, light gray in dark mode)
+- Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
+- Clean, responsive popup with automatic light and dark mode
+- Default/Claude themes for translation text and the Markdown viewer
 - Translation cache stored locally
-- Toolbar popup: translate button, Default/Claude theme switch, links to language settings and the Markdown viewer
-- Target language configurable on the options page
+- Target language configurable from the popup or the options page
 
 ## Installation
 
@@ -34,9 +34,10 @@ src/
   background.ts        Service worker: translation + cache + toggle command
   content.ts           Content script entry point
   dom-translator.ts    DOM walker and bilingual insertion
+  dark-mode.ts         Automatic page dark mode
   viewer.ts            Markdown viewer page
   options.ts           Options page
-  popup.ts             Toolbar popup (toggle, theme)
+  popup.ts             Toolbar popup (toggle, language, themes)
   shared.ts            Shared types and utilities
 static/
   manifest.json

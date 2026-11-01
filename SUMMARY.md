@@ -1,7 +1,7 @@
-# Bilingual Translate Extension - Summary
+# Lucid Extension - Summary
 
 ## What It Does
-Chrome and Firefox extension for bilingual page translation using Microsoft Translator. Press **Alt+A** on any page to toggle translation lines below each paragraph.
+Chrome and Firefox extension that makes web pages easier to read: bilingual translation (Microsoft Translator), automatic page dark mode, and a Markdown viewer. Press **Alt+A** on any page to toggle translation lines below each paragraph.
 
 ## Status
 - ✅ Chrome/Edge build fully working
@@ -16,10 +16,10 @@ Chrome and Firefox extension for bilingual page translation using Microsoft Tran
 - Configurable target language (default: zh-Hans)
 - Two themes: Default (gray, subtle) and Claude (orange/clay, warm paper tones)
 - Auto dark mode support for both themes
-- Clean blue/white/gray icon (bilingual card concept)
+- Clean A → glyph-card icon (bilingual translation concept)
 
 ## Visual Design
-- **Icon:** Blue background with white card (CJK glyph) and gray card (A)
+- **Icon:** Blue gradient tile with a white "A" and a light card holding a CJK-style glyph
 - **Translation text:** Inherits page text color at 82% opacity with blue left border
 - **Dark mode:** Automatic via `prefers-color-scheme`
 - **Loading state:** Shimmer animation

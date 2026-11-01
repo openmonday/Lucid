@@ -33,13 +33,13 @@ Firefox requires all permanently installed extensions to be signed by Mozilla. Y
    ```bash
    npm run build:firefox
    cd dist-firefox
-   zip -r ../bilingual-translate.xpi .
+   zip -r ../lucid.xpi .
    cd ..
    ```
 
 4. In Firefox, go to `about:addons` → ⚙️ (gear icon) → **Install Add-on From File**
 
-5. Select `bilingual-translate.xpi`
+5. Select `lucid.xpi`
 
 **Note:** Stable Firefox and Zen may still refuse unsigned add-ons even with the pref changed. If this happens, use temporary loading or Option 2.
 
@@ -57,11 +57,11 @@ This gives you a signed `.xpi` file you can install on any Firefox/Zen, includin
    ```bash
    npm run build:firefox
    cd dist-firefox
-   zip -r ../bilingual-translate.xpi .
+   zip -r ../lucid.xpi .
    cd ..
    ```
 
-5. Upload `bilingual-translate.xpi`
+5. Upload `lucid.xpi`
 
 6. Automated validation usually completes in minutes
 

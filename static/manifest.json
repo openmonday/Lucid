@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Toolbox",
+  "name": "Lucid",
   "version": "0.1.0",
   "description": "Web translation, Markdown viewing, and automatic dark mode.",
   "minimum_chrome_version": "120",
@@ -37,7 +37,7 @@
     "128": "icons/128.png"
   },
   "action": {
-    "default_title": "Toggle bilingual translation (Alt+A)",
+    "default_title": "Toggle translation (Alt+A)",
     "default_icon": {
       "16": "icons/16.png",
       "32": "icons/32.png",
@@ -50,7 +50,7 @@
       "suggested_key": {
         "default": "Alt+A"
       },
-      "description": "Toggle bilingual page translation"
+      "description": "Toggle page translation"
     }
   },
   "declarative_net_request": {
