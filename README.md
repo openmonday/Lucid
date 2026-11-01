@@ -11,6 +11,7 @@ A browser extension for bilingual page translation using Microsoft Translator. W
 - Clean, responsive design with automatic light and dark mode
 - Translation text uses page text color (dark gray in light mode, light gray in dark mode)
 - Translation cache stored locally
+- Toolbar popup: translate button, Default/Claude theme switch, links to language settings and the Markdown viewer
 - Target language configurable on the options page
 
 ## Installation
@@ -35,6 +36,7 @@ src/
   dom-translator.ts    DOM walker and bilingual insertion
   viewer.ts            Markdown viewer page
   options.ts           Options page
+  popup.ts             Toolbar popup (toggle, theme)
   shared.ts            Shared types and utilities
 static/
   manifest.json
@@ -42,6 +44,7 @@ static/
   viewer.html
   viewer.css
   options.html
+  popup.html
   icons/
 ```
 
