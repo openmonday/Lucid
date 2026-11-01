@@ -1,6 +1,11 @@
-import { DEFAULT_THEME } from "./shared";
+import { DEFAULT_TARGET, DEFAULT_THEME, LANGUAGES } from "./shared";
 
- document.getElementById("toggle")!.addEventListener("click", () => {
+const target = document.getElementById("target") as HTMLSelectElement;
+for (const [code, name] of LANGUAGES) target.add(new Option(name, code));
+chrome.storage.sync.get({ target: DEFAULT_TARGET }).then(v => { target.value = v.target as string; });
+target.addEventListener("change", () => chrome.storage.sync.set({ target: target.value }));
+
+document.getElementById("toggle")!.addEventListener("click", () => {
   void chrome.runtime.sendMessage({ type: "toggle-active" });
   window.close();
 });

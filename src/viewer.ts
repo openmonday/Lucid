@@ -44,5 +44,14 @@ async function init() {
   }
 }
 
-installTranslator("viewerTheme");
+function applyViewerTheme(theme: unknown) {
+  if (theme === "claude") document.documentElement.setAttribute("data-bt-viewer", "claude");
+  else document.documentElement.removeAttribute("data-bt-viewer");
+}
+chrome.storage.sync.get({ viewerTheme: "default" }).then(v => applyViewerTheme(v.viewerTheme));
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "sync" && changes.viewerTheme) applyViewerTheme(changes.viewerTheme.newValue);
+});
+
+installTranslator();
 void init();
