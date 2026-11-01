@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Markdown Viewer</title>
+<link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+<div id="drop">
+  <img src="icons/128.png" alt="">
+  <h2>Open a local Markdown file</h2>
+  <p id="notice" hidden></p>
+  <label class="btn" for="picker">Choose file</label>
+  <input type="file" id="picker" accept=".md,.markdown,.mdx,.txt,text/*">
+  <p>or drop it anywhere on this page</p>
+</div>
+<article id="content" class="markdown-body" hidden></article>
+<script type="module" src="viewer.js"></script>
+</body>
+</html>

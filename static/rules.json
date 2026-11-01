@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        {
+          "header": "Origin",
+          "operation": "set",
+          "value": "https://www.bing.com"
+        },
+        {
+          "header": "Referer",
+          "operation": "set",
+          "value": "https://www.bing.com/translator"
+        }
+      ]
+    },
+    "condition": {
+      "regexFilter": "^https://[a-z]+\\.bing\\.com/(ttranslatev3|translator)",
+      "resourceTypes": [
+        "xmlhttprequest"
+      ]
+    }
+  }
+]
