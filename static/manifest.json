@@ -50,7 +50,7 @@
       "suggested_key": {
         "default": "Alt+A"
       },
-      "description": "Toggle page translation"
+      "description": "Toggle bilingual page translation"
     }
   },
   "declarative_net_request": {

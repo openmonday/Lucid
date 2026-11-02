@@ -41,6 +41,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") dd.classList
 chrome.storage.sync.get({ target: DEFAULT_TARGET }).then(v => { target = v.target as string; renderTarget(); });
 renderTarget();
 
+// ---- load keyboard shortcut ----
+chrome.commands.getAll().then(commands => {
+  const toggleCmd = commands.find(c => c.name === "toggle-translate");
+  const shortcut = toggleCmd?.shortcut || "Not set";
+  const kbd = document.getElementById("shortcut-key");
+  if (kbd) kbd.textContent = shortcut;
+});
+
 // ---- translate ----
 document.getElementById("toggle")!.addEventListener("click", () => {
   void chrome.runtime.sendMessage({ type: "toggle-active" });
