@@ -1,5 +1,11 @@
 import { translateMany } from "./bing";
-import { DEFAULT_TARGET, type Request, type TranslateResponse } from "./shared";
+import {
+  DEFAULT_TARGET,
+  type FetchStylesheetRequest,
+  type FetchStylesheetResponse,
+  type Request,
+  type TranslateResponse,
+} from "./shared";
 
 // ---- translation with a persistent cache ----
 const CACHE_KEY = "cache-v1";
@@ -60,6 +66,32 @@ chrome.commands.onCommand.addListener((command, tab) => { if (command === "toggl
 chrome.runtime.onMessage.addListener((message: Request) => {
   if (message?.type === "toggle-active") void toggle();
 });
+
+// ---- privileged stylesheet fetch for the dark theme engine ----
+// Dark Reader needs to read cross-origin stylesheets to rewrite their colors.
+// Content-script fetch is subject to CORS; the background fetch is not.
+chrome.runtime.onMessage.addListener(
+  (message: FetchStylesheetRequest, _sender, sendResponse) => {
+    if (message?.type !== "fetch-stylesheet") return;
+    fetch(message.url, { credentials: "omit" }).then(
+      async (response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = await response.text();
+        sendResponse({
+          ok: true,
+          text,
+          contentType: response.headers.get("content-type") || "text/css",
+        } satisfies FetchStylesheetResponse);
+      },
+      (error) =>
+        sendResponse({
+          ok: false,
+          error: String(error?.message ?? error),
+        } satisfies FetchStylesheetResponse),
+    );
+    return true;
+  },
+);
 
 // ---- send local Markdown files to the viewer ----
 const viewer = (src: string) => chrome.runtime.getURL(`viewer.html?src=${encodeURIComponent(src)}`);

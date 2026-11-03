@@ -11,6 +11,8 @@
     "declarativeNetRequest"
   ],
   "host_permissions": [
+    "http://*/*",
+    "https://*/*",
     "https://*.bing.com/*"
   ],
   "background": {

@@ -16,6 +16,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "darkreader": "^4.9.134",
     "dompurify": "^3.4.17",
     "markdown-it": "^15.0.3"
   }

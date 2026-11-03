@@ -25,6 +25,14 @@ export type TranslateResponse =
   | { ok: true; translations: string[] }
   | { ok: false; error: string };
 
+export type FetchStylesheetRequest = {
+  type: "fetch-stylesheet";
+  url: string;
+};
+export type FetchStylesheetResponse =
+  | { ok: true; text: string; contentType: string }
+  | { ok: false; error: string };
+
 export function needsTranslation(text: string, target: string): boolean {
   if (!/\p{L}/u.test(text)) return false;
   if (target.startsWith("zh") && /\p{Script=Han}/u.test(text) && !/[A-Za-z]{3}/.test(text)) return false;

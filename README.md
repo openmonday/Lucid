@@ -7,6 +7,8 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - **Alt+A** toggles bilingual translation on the current page (powered by Microsoft Translator)
 - Translates as you scroll — only visible blocks are sent to the translation engine
 - Automatic dark mode that darkens any web page, following your system preference
+- Pages with their own dark theme (and pages already themed by another dark-mode extension) are left untouched
+- Dark mode can be toggled from the popup
 - Markdown viewer with drag-and-drop support
 - Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
 - Clean, responsive popup with automatic light and dark mode
@@ -34,7 +36,8 @@ src/
   background.ts        Service worker: translation + cache + toggle command
   content.ts           Content script entry point
   dom-translator.ts    DOM walker and bilingual insertion
-  dark-mode.ts         Automatic page dark mode
+  dark-mode.ts         Dark Reader dynamic theme + native dark-page detection
+  native-messaging.ts  Keeps native runtime messaging working alongside Dark Reader
   viewer.ts            Markdown viewer page
   options.ts           Options page
   popup.ts             Toolbar popup (toggle, language, themes)
@@ -56,6 +59,8 @@ The translator is adapted from `agent/plugins/pi-bridge/src/core/translator.ts`.
 Results are cached in `chrome.storage.local`, keyed by target language and source text.
 
 ## Design
+
+Page dark mode is powered by [Dark Reader](https://github.com/darkreader/darkreader)'s dynamic theme engine (MIT, see `static/THIRD-PARTY-NOTICES.txt`). Lucid detects pages that already have a dark theme before applying anything, so native dark sites are not double-themed.
 
 Visual style references the Claude Design System tokens (`agent/assist/refs/open-claude-ui/code-examples/cds-theme.css`):
 - Deep slate surfaces with crisp borders
