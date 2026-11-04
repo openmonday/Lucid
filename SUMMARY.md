@@ -70,11 +70,11 @@ build-firefox.mjs     Firefox build (same, renames manifest)
 ```
 
 ## Translation Engine
-Adapted from `agent/plugins/pi-bridge/src/core/translator.ts`. Uses Microsoft neural translation endpoint via the public Bing Translator page. Session token from loading `https://www.bing.com/translator`, with `credentials: "include"` for cookies. `declarativeNetRequest` rewrites `Origin` and `Referer` headers.
+Implemented in `src/bing.ts`. Uses Microsoft neural translation endpoint via the public Bing Translator page. Session token from loading `https://www.bing.com/translator`, with `credentials: "include"` for cookies. `declarativeNetRequest` rewrites `Origin` and `Referer` headers.
 
 ## Design References
-- Visual style: Claude Design System (`agent/assist/refs/open-claude-ui/code-examples/cds-theme.css`)
-- Icon concept: Immersive Translate Firefox build (`reference/translator/immersive-translate/dist/firefox`)
+- Visual style: Claude Design System-inspired tokens defined in `static/viewer.css`
+- Icon concept: bilingual A/CJK glyph mark, drawn in `assets/icon.svg`
 
 ## Git History
 ```

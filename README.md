@@ -61,7 +61,7 @@ build-assets.mjs       Copies the local KaTeX stylesheet and fonts into each bui
 
 ## Translation Engine
 
-The translator is adapted from `agent/plugins/pi-bridge/src/core/translator.ts`. It uses the same Microsoft neural translation endpoint as the public Bing Translator page. Session tokens are obtained by loading `https://www.bing.com/translator` once, and subsequent translation requests carry the browser's cookies with `credentials: "include"`. `declarativeNetRequest` rewrites `Origin` and `Referer` headers to match the Bing origin.
+The translator lives in `src/bing.ts`. It uses the same Microsoft neural translation endpoint as the public Bing Translator page. Session tokens are obtained by loading `https://www.bing.com/translator` once, and subsequent translation requests carry the browser's cookies with `credentials: "include"`. `declarativeNetRequest` rewrites `Origin` and `Referer` headers to match the Bing origin.
 
 Results are cached in `chrome.storage.local`, keyed by target language and source text.
 
@@ -69,7 +69,7 @@ Results are cached in `chrome.storage.local`, keyed by target language and sourc
 
 Page dark mode is powered by [Dark Reader](https://github.com/darkreader/darkreader)'s dynamic theme engine (MIT, see `static/THIRD-PARTY-NOTICES.txt`). Lucid detects pages that already have a dark theme before applying anything, so native dark sites are not double-themed.
 
-Visual style references the Claude Design System tokens (`agent/assist/refs/open-claude-ui/code-examples/cds-theme.css`):
+The UI takes its cues from the Claude Design System; every token is defined in `static/viewer.css`:
 - Deep slate surfaces with crisp borders
 - Warm clay accent (#c6613f light, #e08264 dark)
 - System font stack with CJK fallbacks
