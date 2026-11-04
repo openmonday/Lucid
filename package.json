@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node build.mjs",
     "typecheck": "tsc --noEmit",
-    "build:firefox": "node build-firefox.mjs"
+    "build:firefox": "node build-firefox.mjs",
+    "package:firefox": "npm run build:firefox && rm -f lucid.xpi && cd dist-firefox && zip -qr -X ../lucid.xpi ."
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
@@ -19,6 +20,7 @@
     "@mdit/plugin-katex": "^1.1.5",
     "darkreader": "^4.9.134",
     "dompurify": "^3.4.17",
+    "highlight.js": "^11.12.0",
     "katex": "^0.19.1",
     "markdown-it": "^15.0.3"
   }

@@ -1,9 +1,66 @@
 import MarkdownIt from "markdown-it";
+import hljs from "highlight.js/lib/common";
 import { katex as katexPlugin } from "@mdit/plugin-katex";
 import DOMPurify from "dompurify";
 import { installTranslator } from "./dom-translator";
 
-const md = new MarkdownIt({ html: false, linkify: true });
+const LANGUAGE_NAMES: Record<string, string> = {
+  bash: "Shell",
+  c: "C",
+  cpp: "C++",
+  csharp: "C#",
+  cs: "C#",
+  css: "CSS",
+  diff: "Diff",
+  dockerfile: "Dockerfile",
+  go: "Go",
+  html: "HTML",
+  ini: "INI",
+  java: "Java",
+  javascript: "JavaScript",
+  js: "JavaScript",
+  json: "JSON",
+  jsx: "JSX",
+  kotlin: "Kotlin",
+  md: "Markdown",
+  markdown: "Markdown",
+  php: "PHP",
+  plaintext: "Text",
+  py: "Python",
+  python: "Python",
+  rb: "Ruby",
+  ruby: "Ruby",
+  rs: "Rust",
+  rust: "Rust",
+  scss: "SCSS",
+  sh: "Shell",
+  shell: "Shell",
+  sql: "SQL",
+  swift: "Swift",
+  text: "Text",
+  toml: "TOML",
+  ts: "TypeScript",
+  tsx: "TSX",
+  typescript: "TypeScript",
+  xml: "XML",
+  yaml: "YAML",
+  yml: "YAML",
+};
+
+const md = new MarkdownIt({
+  html: false,
+  linkify: true,
+  highlight(code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
+      } catch {
+        // Fall back to markdown-it's escaped plain text.
+      }
+    }
+    return "";
+  },
+});
 md.use(katexPlugin, {
   delimiters: "all",
   mathFence: true,
@@ -22,6 +79,65 @@ const drop = document.getElementById("drop")!;
 const notice = document.getElementById("notice")!;
 const picker = document.getElementById("picker") as HTMLInputElement;
 
+function languageName(code: HTMLElement): string {
+  const match = /(?:^|\s)language-([^\s]+)/.exec(code.className);
+  if (!match) return "Text";
+  const lang = match[1].toLowerCase();
+  return LANGUAGE_NAMES[lang] ?? lang.replace(/^./, c => c.toUpperCase());
+}
+
+async function copyCode(code: HTMLElement, button: HTMLButtonElement) {
+  const text = code.textContent ?? "";
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.append(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+  }
+  button.textContent = "Copied";
+  button.classList.add("copied");
+  setTimeout(() => {
+    button.textContent = "Copy";
+    button.classList.remove("copied");
+  }, 1600);
+}
+
+function enhanceCodeBlocks() {
+  content.querySelectorAll<HTMLPreElement>("pre").forEach(pre => {
+    const code = pre.querySelector<HTMLElement>("code");
+    if (!code) return;
+    code.classList.add("hljs");
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-block";
+
+    const header = document.createElement("div");
+    header.className = "code-block-header";
+
+    const language = document.createElement("span");
+    language.className = "code-block-language";
+    language.textContent = languageName(code);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "code-block-copy";
+    button.textContent = "Copy";
+    button.setAttribute("aria-label", "Copy code to clipboard");
+    button.addEventListener("click", () => void copyCode(code, button));
+
+    header.append(language, button);
+    pre.replaceWith(wrapper);
+    wrapper.append(header, pre);
+  });
+}
+
 function show(text: string, name: string, base?: string) {
   document.title = name;
   if (base) {
@@ -34,6 +150,7 @@ function show(text: string, name: string, base?: string) {
     const href = (a as HTMLAnchorElement).href;
     if (/^https?:/.test(href)) { a.setAttribute("target", "_blank"); a.setAttribute("rel", "noreferrer"); }
   });
+  enhanceCodeBlocks();
   content.hidden = false;
   drop.hidden = true;
 }

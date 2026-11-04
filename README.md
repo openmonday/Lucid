@@ -11,9 +11,11 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - Pages with their own dark theme (and pages already themed by another dark-mode extension) are left untouched
 - Dark mode can be toggled from the popup
 - Markdown viewer with drag-and-drop support
+- Syntax-highlighted code blocks with a language label and one-click copy
 - LaTeX math rendered with KaTeX: `$...$`, `$$...$$`, `\(...\)`, `\[...\]`, and fenced `math` blocks
 - Translation keeps LaTeX formulas intact and re-renders them in translation lines
 - Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
+- Local Markdown files keep their `file://` URL while rendering in the viewer
 - Clean, responsive popup with automatic light and dark mode
 - Default/Claude themes for translation text and the Markdown viewer
 - Translation cache stored locally

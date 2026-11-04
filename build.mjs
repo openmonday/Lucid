@@ -11,6 +11,7 @@ const options = {
   entryPoints: {
     background: "src/background.ts",
     content: "src/content.ts",
+    "markdown-file": "src/markdown-file.ts",
     viewer: "src/viewer.ts",
     options: "src/options.ts",
     popup: "src/popup.ts",

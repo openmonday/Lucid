@@ -92,13 +92,3 @@ chrome.runtime.onMessage.addListener(
     return true;
   },
 );
-
-// ---- send local Markdown files to the viewer ----
-const viewer = (src: string) => chrome.runtime.getURL(`viewer.html?src=${encodeURIComponent(src)}`);
-chrome.webNavigation.onBeforeNavigate.addListener(
-  details => {
-    if (details.frameId !== 0) return;
-    chrome.tabs.update(details.tabId, { url: viewer(details.url) });
-  },
-  { url: [".md", ".markdown", ".mdown", ".mkd"].map(pathSuffix => ({ schemes: ["file"], pathSuffix })) },
-);

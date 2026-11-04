@@ -31,10 +31,7 @@ Firefox requires all permanently installed extensions to be signed by Mozilla. Y
 
 3. Build and package:
    ```bash
-   npm run build:firefox
-   cd dist-firefox
-   zip -r ../lucid.xpi .
-   cd ..
+   npm run package:firefox
    ```
 
 4. In Firefox, go to `about:addons` → ⚙️ (gear icon) → **Install Add-on From File**
@@ -55,10 +52,7 @@ This gives you a signed `.xpi` file you can install on any Firefox/Zen, includin
 
 4. Build and package:
    ```bash
-   npm run build:firefox
-   cd dist-firefox
-   zip -r ../lucid.xpi .
-   cd ..
+   npm run package:firefox
    ```
 
 5. Upload `lucid.xpi`
