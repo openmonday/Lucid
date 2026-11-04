@@ -78,6 +78,9 @@ const content = document.getElementById("content")!;
 const drop = document.getElementById("drop")!;
 const notice = document.getElementById("notice")!;
 const picker = document.getElementById("picker") as HTMLInputElement;
+const src = new URLSearchParams(location.search).get("src");
+const handoff = new URLSearchParams(location.search).has("handoff");
+let rendered = false;
 
 function languageName(code: HTMLElement): string {
   const match = /(?:^|\s)language-([^\s]+)/.exec(code.className);
@@ -138,7 +141,17 @@ function enhanceCodeBlocks() {
   });
 }
 
+function fileName(src: string): string {
+  const last = src.split("/").pop() || src;
+  try {
+    return decodeURIComponent(last);
+  } catch {
+    return last;
+  }
+}
+
 function show(text: string, name: string, base?: string) {
+  rendered = true;
   document.title = name;
   if (base) {
     const el = document.createElement("base");
@@ -162,16 +175,37 @@ addEventListener("dragover", e => { e.preventDefault(); document.body.classList.
 addEventListener("dragleave", e => { if (!e.relatedTarget) document.body.classList.remove("dragging"); });
 addEventListener("drop", e => { e.preventDefault(); document.body.classList.remove("dragging"); const f = e.dataTransfer?.files[0]; if (f) openFile(f); });
 
+// The embedding content script already has the file's text and sends it via
+// postMessage, because Firefox/Zen block file:// reads from extension pages.
+addEventListener("message", (event) => {
+  const data = event.data as { type?: unknown; src?: unknown; text?: unknown } | null;
+  if (event.source !== parent) return;
+  if (!handoff || rendered) return;
+  if (data?.type !== "lucid:local-markdown" || typeof data.text !== "string") return;
+  if (!src || data.src !== src) return;
+  show(data.text, fileName(src), src);
+});
+
+function showReadError(src: string) {
+  notice.hidden = false;
+  notice.textContent = navigator.userAgent.includes("Firefox")
+    ? `Cannot read ${src} directly. Drop the file here or choose it below.`
+    : `Cannot read ${src}. Enable "Allow access to file URLs" for this extension on chrome://extensions, or choose the file below.`;
+}
+
 async function init() {
-  const src = new URLSearchParams(location.search).get("src");
   if (!src?.startsWith("file://")) return;
+  if (handoff) {
+    // Wait for the content script's message, which arrives with the iframe load.
+    setTimeout(() => { if (!rendered) showReadError(src); }, 3000);
+    return;
+  }
   try {
     const response = await fetch(src);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    show(await response.text(), decodeURIComponent(src.split("/").pop() ?? src), src);
+    show(await response.text(), fileName(src), src);
   } catch {
-    notice.hidden = false;
-    notice.textContent = `Cannot read ${src}. Enable "Allow access to file URLs" for this extension on chrome://extensions, or choose the file below.`;
+    showReadError(src);
   }
 }
 

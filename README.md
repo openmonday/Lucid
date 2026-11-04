@@ -14,8 +14,8 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - Syntax-highlighted code blocks with a language label and one-click copy
 - LaTeX math rendered with KaTeX: `$...$`, `$$...$$`, `\(...\)`, `\[...\]`, and fenced `math` blocks
 - Translation keeps LaTeX formulas intact and re-renders them in translation lines
-- Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
-- Local Markdown files keep their `file://` URL while rendering in the viewer
+- Works on local `.html` and `.md` files (Chrome needs the "Allow access to file URLs" toggle; Firefox 153+ uses **Access local files on your computer** in `about:addons` → Permissions)
+- Local Markdown files keep their `file://` URL while rendering in the viewer. Firefox/Zen do not let extension pages read `file://` URLs, so the file page's content script passes the text to the viewer
 - Clean, responsive popup with automatic light and dark mode
 - Default/Claude themes for translation text and the Markdown viewer
 - Translation cache stored locally

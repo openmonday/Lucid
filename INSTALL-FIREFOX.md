@@ -80,8 +80,9 @@ Submit to AMO for public distribution. Manual review takes days to weeks. Users 
 
 - Press **Alt+A** to toggle bilingual translation on any page
 - Change target language: click the gear icon on `about:addons` next to the extension
-- Works on `file://` URLs without requiring special permissions (unlike Chrome)
-- Local `.md` files should redirect to the extension's viewer (untested in Firefox). If not, open `viewer.html` and use its file picker.
+- Works on `file://` URLs without requiring Chrome's per-extension file access toggle. Firefox 153+ has its own **Access local files on your computer** opt-in under `about:addons` → Lucid → Permissions.
+- Local `.md` files should open in the extension's viewer. The page's content script passes the raw text to the viewer because Firefox/Zen do not let extension pages re-read `file://` URLs.
+- If a local file does not render, drop it onto the viewer page instead; the file picker and drag-and-drop always work.
 
 ## Zen Browser Notes
 
@@ -89,6 +90,6 @@ Zen is based on Firefox, so the same installation methods work. Use `about:debug
 
 ## Differences from Chrome
 
-- **File access:** works by default, no permission toggle needed
+- **File access:** content scripts run on `file://` URLs without Chrome's toggle. On Firefox 153+ enable **Access local files on your computer** in `about:addons` → Lucid → Permissions. The viewer never fetches the file URL itself; the content script hands it the already-loaded text.
 - **Background script:** persistent event page instead of a service worker
 - **Host permissions:** Firefox may prompt you to grant `bing.com` access on first translation

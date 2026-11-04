@@ -11,8 +11,20 @@ if (location.protocol === "file:" && MARKDOWN_FILE.test(location.pathname)) {
   const mount = () => {
     if (!document.body) return;
     const fileName = decodeURIComponent(location.pathname.split("/").pop() || "Markdown");
+    // Firefox and Zen do not let extension pages access file:// URLs, so the
+    // viewer cannot fetch the file itself. Read the text from this page before
+    // replacing it, then hand it to the iframe once it has loaded.
+    const text = document.body.textContent ?? "";
     const iframe = document.createElement("iframe");
-    iframe.src = chrome.runtime.getURL(`viewer.html?src=${encodeURIComponent(location.href)}`);
+    iframe.addEventListener("load", () => {
+      iframe.contentWindow?.postMessage(
+        { type: "lucid:local-markdown", src: location.href, text },
+        "*",
+      );
+    });
+    iframe.src = chrome.runtime.getURL(
+      `viewer.html?src=${encodeURIComponent(location.href)}&handoff=1`,
+    );
     iframe.title = fileName;
     document.title = fileName;
     iframe.dataset.lucidViewer = "";
