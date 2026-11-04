@@ -6,6 +6,7 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 
 - **Alt+A** toggles bilingual translation on the current page (powered by Microsoft Translator)
 - Translates as you scroll — only visible blocks are sent to the translation engine
+- Main-content mode (the default) translates article text while skipping navigation, menus, forms, and buttons; switch to whole-page translation in the popup or options
 - Automatic dark mode that darkens any web page, following your system preference
 - Pages with their own dark theme (and pages already themed by another dark-mode extension) are left untouched
 - Dark mode can be toggled from the popup
@@ -37,13 +38,13 @@ src/
   bing.ts              Microsoft Translator via the public Bing page
   background.ts        Service worker: translation + cache + toggle command
   content.ts           Content script entry point
-  dom-translator.ts    DOM walker and bilingual insertion
+  dom-translator.ts    DOM walker, content scope, and bilingual insertion
   math.ts              LaTeX detection and KaTeX rendering for translations
   dark-mode.ts         Dark Reader dynamic theme + native dark-page detection
   native-messaging.ts  Keeps native runtime messaging working alongside Dark Reader
   viewer.ts            Markdown viewer page (Markdown-It + KaTeX)
   options.ts           Options page
-  popup.ts             Toolbar popup (toggle, language, themes)
+  popup.ts             Toolbar popup (toggle, language, scope, themes)
   shared.ts            Shared types and utilities
 static/
   manifest.json

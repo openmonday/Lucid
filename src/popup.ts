@@ -1,4 +1,4 @@
-import { DEFAULT_TARGET, DEFAULT_THEME, LANGUAGES } from "./shared";
+import { DEFAULT_TARGET, DEFAULT_THEME, DEFAULT_TRANSLATION_SCOPE, LANGUAGES } from "./shared";
 
 const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>';
 
@@ -73,6 +73,26 @@ darkSwitch.addEventListener("click", async () => {
   void loadDark();
 });
 
+// ---- content scope ----
+const scopeGroup = document.querySelector<HTMLDivElement>("[data-scope-group]");
+
+async function loadScope() {
+  if (!scopeGroup) return;
+  const { translationScope } = await chrome.storage.sync.get({ translationScope: DEFAULT_TRANSLATION_SCOPE });
+  scopeGroup.querySelectorAll<HTMLButtonElement>("[data-scope]").forEach(button => {
+    button.classList.toggle("active", button.dataset.scope === translationScope);
+  });
+}
+
+scopeGroup?.querySelectorAll<HTMLButtonElement>("[data-scope]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const value = button.dataset.scope;
+    if (!value) return;
+    await chrome.storage.sync.set({ translationScope: value });
+    scopeGroup.querySelectorAll("[data-scope]").forEach(item => item.classList.toggle("active", item === button));
+  });
+});
+
 // ---- theme segments ----
 const groups = document.querySelectorAll<HTMLDivElement>("[data-theme-group]");
 
@@ -96,4 +116,5 @@ groups.forEach(group => {
 });
 
 void loadDark();
+void loadScope();
 void loadThemes();

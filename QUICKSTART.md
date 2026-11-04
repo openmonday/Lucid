@@ -58,6 +58,7 @@ See [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md) for:
 - **Dark mode:** Switches automatically with your system theme
 - **Translation cache:** Stored locally for faster repeated translations
 - **Selective translation:** Only visible content is translated (lazy loading)
+- **Main-content mode:** Skips navigation, menus, forms, and buttons by default; switch to **All** in the popup to translate the whole page
 
 ## Troubleshooting
 

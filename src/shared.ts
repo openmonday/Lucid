@@ -17,6 +17,13 @@ export const THEMES: [string, string][] = [
   ["claude", "Claude"],
 ];
 
+export type TranslationScope = "main" | "all";
+export const DEFAULT_TRANSLATION_SCOPE: TranslationScope = "main";
+export const TRANSLATION_SCOPES: [TranslationScope, string][] = [
+  ["main", "Main content"],
+  ["all", "Whole page"],
+];
+
 export type Request =
   | { type: "translate"; texts: string[] }
   | { type: "toggle" }

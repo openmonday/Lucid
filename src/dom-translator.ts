@@ -1,11 +1,25 @@
-import { DEFAULT_THEME, needsTranslation, type Request, type TranslateResponse } from "./shared";
+import {
+  DEFAULT_THEME,
+  DEFAULT_TRANSLATION_SCOPE,
+  needsTranslation,
+  type Request,
+  type TranslateResponse,
+  type TranslationScope,
+} from "./shared";
 import { mathFromElement, PLACEHOLDER, placeholder, renderRichText, splitMath, type RichReplacement } from "./math";
 
 const CLASS = "bt-t";
 const SKIP = "script,style,noscript,template,pre,textarea,input,select,svg,math,canvas,iframe,[contenteditable=''],[contenteditable='true'],[translate='no'],.notranslate,.bt-t";
-const INLINE = "a,span,b,i,em,strong,small,sub,sup,mark,abbr,cite,q,u,s,time,kbd,var,label,font,bdi,bdo,img,br,wbr,code,samp,del,ins,dfn,math,mjx-container,.MathJax";
+// `input` is skipped as a translation target, but it must remain inline so a
+// checkbox or radio button does not split the prose beside it into a lost text run.
+const INLINE = "a,span,b,i,em,strong,small,sub,sup,mark,abbr,cite,q,u,s,time,kbd,var,label,font,bdi,bdo,img,br,wbr,input,code,samp,del,ins,dfn,math,mjx-container,.MathJax";
 const KEEP = "code,kbd,samp";
 const MATH = "math,.katex,mjx-container,.MathJax";
+const CHROME = "nav,aside,form,dialog,menu,[role='navigation'],[role='banner'],[role='contentinfo'],[role='complementary'],[role='search'],[role='menu'],[role='menubar'],[role='toolbar'],[role='dialog'],[aria-hidden='true']";
+const CONTROL = "button,summary,[role='button'],[role='tab'],[role='menuitem'],[role='menuitemcheckbox'],[role='menuitemradio'],[role='option'],[role='switch'],[role='checkbox'],[role='radio'],[role='slider'],[role='spinbutton']";
+const MAIN = "main,[role='main']";
+const ARTICLE = "article,[role='article']";
+const LANDMARK = "main,[role='main'],article,[role='article']";
 const BATCH_ITEMS = 16;
 const BATCH_CHARS = 6000;
 const MAX_UNIT = 4000;
@@ -13,6 +27,7 @@ const MAX_UNIT = 4000;
 interface Unit { el: Element; text: string; replacements: RichReplacement[] }
 
 let enabled = false;
+let scope: TranslationScope = DEFAULT_TRANSLATION_SCOPE;
 let io: IntersectionObserver | undefined;
 let mo: MutationObserver | undefined;
 let scanTimer: ReturnType<typeof setTimeout> | undefined;
@@ -70,7 +85,7 @@ function extract(el: Element): Unit | undefined {
     }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const e = node as Element;
-    if (e.matches(".bt-t,script,style,noscript,svg")) return;
+    if (e.matches(".bt-t,script,style,noscript,svg") || isSkippedInScope(e)) return;
     if (e.tagName === "BR") { text += " "; return; }
     if (e.matches(KEEP)) { add({ type: "text", value: e.textContent ?? "" }); return; }
     const math = mathFromElement(e);
@@ -88,10 +103,58 @@ function extract(el: Element): Unit | undefined {
 let currentTarget = "";
 const target = () => currentTarget;
 
+function isChrome(el: Element): boolean {
+  if (el.matches(CHROME)) return true;
+  // Keep article headers/footers, but skip site-level header/footer landmarks.
+  return el.matches("header,footer") && !el.closest(LANDMARK);
+}
+
+function isSkippedInScope(el: Element): boolean {
+  return scope === "main" && (isChrome(el) || el.matches(CONTROL));
+}
+
+function isInlineElement(el: Element): boolean {
+  // Treat controls as inline boundaries in main-content mode so surrounding prose
+  // is still translated while the control itself is skipped.
+  return el.matches(INLINE) || (scope === "main" && el.matches(CONTROL));
+}
+
+function textLength(el: Element): number {
+  return (el.textContent ?? "").replace(/\s+/g, " ").trim().length;
+}
+
+function isRendered(el: Element): boolean {
+  return el.getClientRects().length > 0;
+}
+
+function largest(candidates: Element[]): Element | undefined {
+  let best: Element | undefined;
+  let bestLength = 0;
+  for (const candidate of candidates) {
+    if (!isRendered(candidate)) continue;
+    const length = textLength(candidate);
+    if (length > bestLength) {
+      best = candidate;
+      bestLength = length;
+    }
+  }
+  return best;
+}
+
+function contentRoot(): Element {
+  if (scope === "all") return document.body;
+  const main = largest([...document.querySelectorAll(MAIN)]);
+  if (main) return main;
+  const articles = [...document.querySelectorAll(ARTICLE)];
+  return articles.length === 1 && isRendered(articles[0]) && textLength(articles[0]) > 0
+    ? articles[0]
+    : document.body;
+}
+
 function hasBlockOutsideMath(el: Element): boolean {
   for (const child of el.children) {
     if (child.closest(MATH)) continue;
-    if (!child.matches(INLINE) || hasBlockOutsideMath(child)) return true;
+    if (!isInlineElement(child) || hasBlockOutsideMath(child)) return true;
   }
   return false;
 }
@@ -102,13 +165,13 @@ function isUnit(el: Element): boolean {
 }
 
 function collect(root: Element, out: Element[]) {
-  if (root.matches(SKIP) || seen.has(root)) return;
-  if (root.matches(INLINE) && root !== document.body) return; // handled by its block parent
+  if (root.matches(SKIP) || isSkippedInScope(root) || seen.has(root)) return;
+  if (isInlineElement(root) && root !== document.body) return; // handled by its block parent
   if (isUnit(root)) { out.push(root); return; }
   for (const child of root.children) collect(child, out);
 }
 
-function scan(root: Element = document.body) {
+function scan(root: Element = contentRoot()) {
   if (!enabled || !root?.isConnected) return;
   const found: Element[] = [];
   collect(root, found);
@@ -173,8 +236,9 @@ function scheduleScan() {
 }
 
 async function enable() {
-  const { target: t } = await chrome.storage.sync.get({ target: "zh-Hans" });
-  currentTarget = t as string;
+  const values = await chrome.storage.sync.get({ target: "zh-Hans", translationScope: DEFAULT_TRANSLATION_SCOPE });
+  currentTarget = values.target as string;
+  scope = values.translationScope === "all" ? "all" : "main";
   enabled = true;
   ensureStyle();
   io = new IntersectionObserver(onVisible, { rootMargin: "300px 0px" });
@@ -199,7 +263,12 @@ function disable() {
 export function installTranslator(themeKey = "translationTheme") {
   chrome.storage.sync.get({ [themeKey]: DEFAULT_THEME }).then(values => applyTheme(values[themeKey]));
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes[themeKey]) applyTheme(changes[themeKey].newValue);
+    if (area !== "sync") return;
+    if (changes[themeKey]) applyTheme(changes[themeKey].newValue);
+    if (changes.translationScope && enabled) {
+      disable();
+      void enable();
+    }
   });
   chrome.runtime.onMessage.addListener((message: Request) => {
     if (message?.type !== "toggle") return;
