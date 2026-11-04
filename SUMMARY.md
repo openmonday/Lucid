@@ -11,6 +11,7 @@ Chrome and Firefox extension that makes web pages easier to read: bilingual tran
 - Bilingual translation (source text + translation, not replacement)
 - Works on web pages, local HTML, and local Markdown files
 - Markdown viewer with drag-and-drop
+- KaTeX rendering for LaTeX math in the viewer and in translation lines
 - Lazy loading (translates only visible content)
 - Translation cache in local storage
 - Configurable target language (default: zh-Hans)
@@ -50,6 +51,7 @@ src/
   bing.ts             Microsoft Translator API via Bing page
   content.ts          Content script entry
   dom-translator.ts   DOM scanning + bilingual insertion
+  math.ts             LaTeX parsing, KaTeX rendering, and KaTeX/MathJax extraction
   viewer.ts           Markdown viewer
   options.ts          Options page
   shared.ts           Common types

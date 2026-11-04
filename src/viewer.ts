@@ -1,8 +1,22 @@
 import MarkdownIt from "markdown-it";
+import { katex as katexPlugin } from "@mdit/plugin-katex";
 import DOMPurify from "dompurify";
 import { installTranslator } from "./dom-translator";
 
 const md = new MarkdownIt({ html: false, linkify: true });
+md.use(katexPlugin, {
+  delimiters: "all",
+  mathFence: true,
+  throwOnError: false,
+  strict: "ignore",
+  trust: false,
+  output: "htmlAndMathml",
+});
+const SANITIZE = {
+  USE_PROFILES: { html: true, mathMl: true, svg: true },
+  ADD_TAGS: ["semantics", "annotation"],
+  ADD_ATTR: ["encoding"],
+};
 const content = document.getElementById("content")!;
 const drop = document.getElementById("drop")!;
 const notice = document.getElementById("notice")!;
@@ -15,7 +29,7 @@ function show(text: string, name: string, base?: string) {
     el.href = base;
     document.head.append(el);
   }
-  content.innerHTML = DOMPurify.sanitize(md.render(text));
+  content.innerHTML = DOMPurify.sanitize(md.render(text), SANITIZE);
   content.querySelectorAll("a[href]").forEach(a => {
     const href = (a as HTMLAnchorElement).href;
     if (/^https?:/.test(href)) { a.setAttribute("target", "_blank"); a.setAttribute("rel", "noreferrer"); }

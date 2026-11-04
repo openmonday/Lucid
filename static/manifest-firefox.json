@@ -36,7 +36,10 @@
       "js": [
         "content.js"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "css": [
+        "vendor/katex/katex.min.css"
+      ]
     }
   ],
   "icons": {
@@ -74,5 +77,16 @@
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "vendor/katex/katex.min.css",
+        "vendor/katex/fonts/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }

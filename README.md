@@ -10,6 +10,8 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - Pages with their own dark theme (and pages already themed by another dark-mode extension) are left untouched
 - Dark mode can be toggled from the popup
 - Markdown viewer with drag-and-drop support
+- LaTeX math rendered with KaTeX: `$...$`, `$$...$$`, `\(...\)`, `\[...\]`, and fenced `math` blocks
+- Translation keeps LaTeX formulas intact and re-renders them in translation lines
 - Works on local `.html` and `.md` files with the "Allow access to file URLs" permission
 - Clean, responsive popup with automatic light and dark mode
 - Default/Claude themes for translation text and the Markdown viewer
@@ -36,9 +38,10 @@ src/
   background.ts        Service worker: translation + cache + toggle command
   content.ts           Content script entry point
   dom-translator.ts    DOM walker and bilingual insertion
+  math.ts              LaTeX detection and KaTeX rendering for translations
   dark-mode.ts         Dark Reader dynamic theme + native dark-page detection
   native-messaging.ts  Keeps native runtime messaging working alongside Dark Reader
-  viewer.ts            Markdown viewer page
+  viewer.ts            Markdown viewer page (Markdown-It + KaTeX)
   options.ts           Options page
   popup.ts             Toolbar popup (toggle, language, themes)
   shared.ts            Shared types and utilities
@@ -50,6 +53,7 @@ static/
   options.html
   popup.html
   icons/
+build-assets.mjs       Copies the local KaTeX stylesheet and fonts into each build
 ```
 
 ## Translation Engine

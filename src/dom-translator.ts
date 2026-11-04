@@ -1,14 +1,16 @@
 import { DEFAULT_THEME, needsTranslation, type Request, type TranslateResponse } from "./shared";
+import { mathFromElement, PLACEHOLDER, placeholder, renderRichText, splitMath, type RichReplacement } from "./math";
 
 const CLASS = "bt-t";
 const SKIP = "script,style,noscript,template,pre,textarea,input,select,svg,math,canvas,iframe,[contenteditable=''],[contenteditable='true'],[translate='no'],.notranslate,.bt-t";
-const INLINE = "a,span,b,i,em,strong,small,sub,sup,mark,abbr,cite,q,u,s,time,kbd,var,label,font,bdi,bdo,img,br,wbr,code,samp,del,ins,dfn";
+const INLINE = "a,span,b,i,em,strong,small,sub,sup,mark,abbr,cite,q,u,s,time,kbd,var,label,font,bdi,bdo,img,br,wbr,code,samp,del,ins,dfn,math,mjx-container,.MathJax";
 const KEEP = "code,kbd,samp";
+const MATH = "math,.katex,mjx-container,.MathJax";
 const BATCH_ITEMS = 16;
 const BATCH_CHARS = 6000;
 const MAX_UNIT = 4000;
 
-interface Unit { el: Element; text: string; keep: string[] }
+interface Unit { el: Element; text: string; replacements: RichReplacement[] }
 
 let enabled = false;
 let io: IntersectionObserver | undefined;
@@ -38,7 +40,11 @@ animation:bt-shimmer 1.2s linear infinite}
 .${CLASS}:not([data-state]){animation:bt-in .25s ease-out}
 @keyframes bt-shimmer{to{background-position:-200% 0}}
 @keyframes bt-in{from{opacity:0;transform:translateY(-2px)}}
-@media (prefers-reduced-motion:reduce){.${CLASS}{animation:none!important}}`;
+@media (prefers-reduced-motion:reduce){.${CLASS}{animation:none!important}}
+.${CLASS} .katex{color:inherit}
+.${CLASS} .bt-math-display{display:block;max-width:100%}
+.${CLASS} .katex-display{margin:.4em 0;padding-bottom:.2em;overflow-x:auto;overflow-y:hidden}
+.${CLASS} .katex-error{color:#dc2626}`;
   document.head.append(s);
 }
 
@@ -48,30 +54,51 @@ function applyTheme(theme: unknown) {
 }
 
 function extract(el: Element): Unit | undefined {
-  const keep: string[] = [];
+  const replacements: RichReplacement[] = [];
   let text = "";
+  const add = (value: RichReplacement) => {
+    replacements.push(value);
+    text += placeholder(replacements.length - 1);
+  };
   const walk = (node: Node) => {
-    if (node.nodeType === Node.TEXT_NODE) { text += node.nodeValue; return; }
+    if (node.nodeType === Node.TEXT_NODE) {
+      for (const part of splitMath(node.nodeValue ?? "")) {
+        if (part.type === "text") text += part.value;
+        else add({ type: "math", value: part.value });
+      }
+      return;
+    }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const e = node as Element;
-    if (e.matches(".bt-t,script,style,noscript,svg,math")) return;
+    if (e.matches(".bt-t,script,style,noscript,svg")) return;
     if (e.tagName === "BR") { text += " "; return; }
-    if (e.matches(KEEP)) { keep.push(e.textContent ?? ""); text += `[ZT_KEEP_${keep.length - 1}]`; return; }
+    if (e.matches(KEEP)) { add({ type: "text", value: e.textContent ?? "" }); return; }
+    const math = mathFromElement(e);
+    if (math) { add({ type: "math", value: math }); return; }
+    if (e.matches(MATH)) return;
     e.childNodes.forEach(walk);
   };
   el.childNodes.forEach(walk);
   text = text.replace(/\s+/g, " ").trim();
-  const plain = text.replace(/\[ZT_KEEP_\d+\]/g, "");
+  const plain = text.replace(PLACEHOLDER, "");
   if (!plain || text.length > MAX_UNIT || !needsTranslation(plain, target())) return undefined;
-  return { el, text, keep };
+  return { el, text, replacements };
 }
 
 let currentTarget = "";
 const target = () => currentTarget;
 
+function hasBlockOutsideMath(el: Element): boolean {
+  for (const child of el.children) {
+    if (child.closest(MATH)) continue;
+    if (!child.matches(INLINE) || hasBlockOutsideMath(child)) return true;
+  }
+  return false;
+}
+
 function isUnit(el: Element): boolean {
-  // A unit has no block-level descendants (only inline elements and text).
-  return !el.querySelector(`:not(${INLINE})`) && !el.querySelector(`:scope > .${CLASS}`);
+  // A unit has no block-level descendants (only inline elements, text, and math).
+  return !el.querySelector(`:scope > .${CLASS}`) && !hasBlockOutsideMath(el);
 }
 
 function collect(root: Element, out: Element[]) {
@@ -136,9 +163,8 @@ function render(unit: Unit, translated: string | undefined, error?: string) {
     node.textContent = `Translation failed: ${error ?? "unknown error"}`;
     return;
   }
-  const out = translated.replace(/\[ZT_KEEP_(\d+)\]/g, (_, n) => unit.keep[Number(n)] ?? "");
   node.removeAttribute("data-state");
-  node.textContent = out;
+  renderRichText(node, translated, unit.replacements);
 }
 
 function scheduleScan() {

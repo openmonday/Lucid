@@ -1,9 +1,11 @@
 import { build } from "esbuild";
+import { copyKatex } from "./build-assets.mjs";
 import { cpSync, mkdirSync, rmSync, renameSync } from "node:fs";
 
 rmSync("dist-firefox", { recursive: true, force: true });
 mkdirSync("dist-firefox", { recursive: true });
 cpSync("static", "dist-firefox", { recursive: true });
+copyKatex("dist-firefox");
 renameSync("dist-firefox/manifest-firefox.json", "dist-firefox/manifest.json");
 
 const options = {

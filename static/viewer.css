@@ -121,6 +121,15 @@ body.dragging #drop { border-color: var(--clay); background: var(--clay-soft); }
 #content hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
 #content img { max-width: 100%; border-radius: 10px; }
 
+/* KaTeX math */
+#content .katex { font-size: 1.08em; }
+#content .katex-display {
+  margin: 1.2em 0; padding: .15em 0 .35em;
+  overflow-x: auto; overflow-y: hidden;
+}
+#content .katex-error { color: var(--clay); font: .9em var(--mono); }
+#content p.katex-block { margin: 1.2em 0; }
+
 #content blockquote {
   padding: .6em 1.1em; color: var(--text-2);
   background: var(--ghost); border-left: 3px solid var(--clay); border-radius: 0 10px 10px 0;

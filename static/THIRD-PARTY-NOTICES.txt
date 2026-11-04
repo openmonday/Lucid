@@ -23,3 +23,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Lucid also bundles KaTeX and the mdit-plugins KaTeX integration under the MIT License (same terms as above).
+
+KaTeX
+https://github.com/KaTeX/KaTeX
+Copyright (c) 2013-2020 Khan Academy and other contributors
+
+@mdit/plugin-katex, @mdit/plugin-tex, and @mdit/helper
+https://github.com/mdit-plugins/mdit-plugins
+Copyright (c) 2021-present Mr.Hope
