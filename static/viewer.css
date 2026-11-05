@@ -42,7 +42,7 @@
   :root {
     --bg: #151515;
     --surface: #1a1a19;
-    --text: #ececea;
+    --text: #c7c3bd;
     --text-2: #b4b3a8;
     --muted: #898781;
     --border: hsla(0, 0%, 100%, .09);
@@ -104,7 +104,7 @@ html[data-bt-viewer="claude"] {
   html[data-bt-viewer="claude"] {
     --bg: #1a1714;
     --surface: #231f1a;
-    --text: #ececea;
+    --text: #c7c3bd;
     --text-2: #c2c0b6;
     --muted: #9c9a92;
     --border: #332e28;
