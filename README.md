@@ -11,6 +11,7 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - Pages with their own dark theme (and pages already themed by another dark-mode extension) are left untouched
 - Dark mode can be toggled from the popup
 - Markdown viewer with drag-and-drop support
+- YAML frontmatter rendered as an Obsidian-style, collapsible properties card
 - Syntax-highlighted code blocks with a language label and one-click copy
 - LaTeX math rendered with KaTeX: `$...$`, `$$...$$`, `\(...\)`, `\[...\]`, and fenced `math` blocks
 - Translation keeps LaTeX formulas intact and re-renders them in translation lines
@@ -45,6 +46,7 @@ src/
   dark-mode.ts         Dark Reader dynamic theme + native dark-page detection
   native-messaging.ts  Keeps native runtime messaging working alongside Dark Reader
   viewer.ts            Markdown viewer page (Markdown-It + KaTeX)
+  metadata.ts          YAML frontmatter parsing and properties card
   options.ts           Options page
   popup.ts             Toolbar popup (toggle, language, scope, themes)
   shared.ts            Shared types and utilities

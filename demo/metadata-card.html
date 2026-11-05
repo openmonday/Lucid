@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lucid · Metadata card preview</title>
+<script>
+  (() => {
+    const params = new URLSearchParams(location.search);
+    const mode = params.get("mode");
+    const root = document.documentElement;
+    root.dataset.mode = mode === "light" || mode === "dark"
+      ? mode
+      : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    if (params.get("theme") === "claude") root.setAttribute("data-bt-viewer", "claude");
+  })();
+</script>
+<style>
+  /* ---------------------------------------------------------------
+     Viewer tokens, copied from static/viewer.css so the demo sits
+     in the same visual world as the real Markdown viewer.
+     --------------------------------------------------------------- */
+  :root {
+    color-scheme: light;
+    --bg: #fcfcfb;
+    --surface: #ffffff;
+    --text: #151515;
+    --text-2: #525252;
+    --muted: #8a8a8a;
+    --border: hsla(0, 0%, 8%, .10);
+    --border-strong: hsla(0, 0%, 8%, .20);
+    --ghost: hsla(0, 0%, 8%, .05);
+    --clay: #c6613f;
+    --clay-soft: #fbf3ef;
+    --positive: #3c7a48;
+    --positive-soft: rgba(60, 122, 72, .11);
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .04);
+    --font: "Anthropic Sans Text", system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
+    --display: "Anthropic Sans Display", "Anthropic Sans Text", system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+    --mono: "Anthropic Mono Web", ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  }
+
+  :root[data-bt-viewer="claude"] {
+    --bg: #f8f6f3;
+    --surface: #ffffff;
+    --text: #2b2623;
+    --text-2: #5e5d59;
+    --muted: #87867f;
+    --border: #e5ddd1;
+    --border-strong: #d1cfc5;
+    --ghost: #f0ebe3;
+    --clay: #c6613f;
+    --clay-soft: #f5ebe6;
+    --positive: #3f7548;
+    --positive-soft: rgba(63, 117, 72, .10);
+    --card-shadow: 0 1px 2px rgba(60, 45, 30, .05), 0 8px 24px rgba(60, 45, 30, .05);
+  }
+
+  :root[data-mode="dark"] {
+    color-scheme: dark;
+    --bg: #151515;
+    --surface: #1a1a19;
+    --text: #ececea;
+    --text-2: #b4b3a8;
+    --muted: #898781;
+    --border: hsla(0, 0%, 100%, .09);
+    --border-strong: hsla(0, 0%, 100%, .18);
+    --ghost: hsla(0, 0%, 100%, .05);
+    --clay: #e08264;
+    --clay-soft: #2a1d18;
+    --positive: #a8d5a2;
+    --positive-soft: rgba(168, 213, 162, .11);
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, .18), 0 8px 24px rgba(0, 0, 0, .12);
+  }
+
+  :root[data-bt-viewer="claude"][data-mode="dark"] {
+    --bg: #1a1714;
+    --surface: #231f1a;
+    --text: #ececea;
+    --text-2: #c2c0b6;
+    --muted: #9c9a92;
+    --border: #332e28;
+    --border-strong: #5e5d59;
+    --ghost: #2a2521;
+    --clay: #e08264;
+    --clay-soft: #3a2a23;
+    --positive: #a8d5a2;
+    --positive-soft: rgba(168, 213, 162, .10);
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, .20), 0 8px 24px rgba(0, 0, 0, .14);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background: var(--bg);
+    font: 16px/1.75 var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .icon-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+  .icon {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  ::selection { background: var(--clay-soft); color: var(--text); }
+
+  /* ---------------------------------------------------------------
+     Preview toolbar (demo chrome, not part of the viewer)
+     --------------------------------------------------------------- */
+  .demo-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 20px;
+    padding: 12px 24px;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .demo-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--text-2);
+    font: 600 12.5px/1.4 var(--font);
+    letter-spacing: .005em;
+    white-space: nowrap;
+  }
+  .demo-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--clay);
+    box-shadow: 0 0 0 3px var(--clay-soft);
+  }
+  .demo-brand .slash { color: var(--muted); font-weight: 400; }
+  .demo-brand .muted { color: var(--muted); font-weight: 500; }
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .seg {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--ghost);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+  }
+  .seg button {
+    appearance: none;
+    padding: 5px 10px;
+    color: var(--muted);
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    font: 500 11.5px/1.35 var(--font);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .seg button:hover { color: var(--text-2); }
+  .seg button[aria-pressed="true"] {
+    color: var(--text);
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .07);
+  }
+  .seg button:focus-visible {
+    outline: 2px solid var(--clay);
+    outline-offset: 1px;
+  }
+
+  /* ---------------------------------------------------------------
+     Document
+     --------------------------------------------------------------- */
+  .doc {
+    width: min(780px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 44px 0 96px;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+  .doc > :first-child { margin-top: 0; }
+  .doc h1,
+  .doc h2,
+  .doc h3 {
+    margin: 1.9em 0 .6em;
+    font-family: var(--display);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+  }
+  .doc h1 {
+    margin-top: 1.55em;
+    padding-bottom: .35em;
+    font-size: 2.05em;
+    font-weight: 650;
+    letter-spacing: -.025em;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc h2 {
+    padding-bottom: .3em;
+    font-size: 1.53em;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc p { margin: 0 0 1.1em; }
+  .doc strong { font-weight: 600; }
+  .doc a {
+    color: var(--clay);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--clay) 35%, transparent);
+    text-underline-offset: 3px;
+  }
+  .doc a:hover { text-decoration-color: currentColor; }
+  .doc blockquote {
+    margin: 0 0 1.1em;
+    padding: .6em 1.1em;
+    color: var(--text-2);
+    background: var(--ghost);
+    border-left: 3px solid var(--clay);
+    border-radius: 0 10px 10px 0;
+  }
+  .doc blockquote > :last-child { margin-bottom: 0; }
+  .doc :not(pre) > code {
+    padding: .15em .4em;
+    font: .86em var(--mono);
+    font-variant-ligatures: none;
+    background: var(--ghost);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .doc hr {
+    margin: 2em 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ---------------------------------------------------------------
+     Proposed metadata card
+     --------------------------------------------------------------- */
+  .metadata-card {
+    margin: 0 0 1.9em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    transition: border-color .2s ease;
+  }
+  .metadata-card:hover { border-color: var(--border-strong); }
+
+  .metadata-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 41px;
+    padding: 9px 15px;
+    border-bottom: 1px solid var(--border);
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  .metadata-head::-webkit-details-marker { display: none; }
+  .metadata-head:focus-visible {
+    outline: 2px solid var(--clay);
+    outline-offset: -2px;
+  }
+  .metadata-card:not([open]) .metadata-head { border-bottom-color: transparent; }
+
+  .metadata-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text-2);
+    font: 600 12.5px/1.4 var(--font);
+    letter-spacing: .005em;
+  }
+  .metadata-heading .icon { color: var(--muted); }
+  .metadata-head-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+  }
+  .metadata-count { font: 400 11px/1.4 var(--font); }
+  .metadata-head .chevron {
+    width: 15px;
+    height: 15px;
+    color: var(--muted);
+    transition: transform .18s ease;
+  }
+  .metadata-card:not([open]) .chevron { transform: rotate(-90deg); }
+
+  .metadata-list { margin: 0; padding: 0; }
+  .metadata-row {
+    display: grid;
+    grid-template-columns: minmax(118px, 150px) minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    margin: 0;
+    padding: 9px 15px;
+    border-bottom: 1px solid var(--border);
+  }
+  .metadata-row:last-child { border-bottom: 0; }
+
+  .metadata-key {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 22px;
+    margin: 0;
+    color: var(--text-2);
+    font: 500 12.5px/1.5 var(--font);
+    letter-spacing: .005em;
+  }
+  .metadata-key .icon { color: var(--muted); }
+
+  .metadata-value {
+    min-width: 0;
+    min-height: 22px;
+    margin: 0;
+    color: var(--text);
+    font: 400 13.5px/1.65 var(--font);
+    overflow-wrap: anywhere;
+  }
+  .metadata-value.text-wrap { text-wrap: pretty; }
+
+  .pill-list,
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    min-height: 22px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 7px;
+    color: var(--text-2);
+    font: 500 11.5px/1.8 var(--font);
+    background: var(--ghost);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
+    color: var(--clay);
+    font: 500 11.5px/1.8 var(--font);
+    background: var(--clay-soft);
+    border: 1px solid color-mix(in srgb, var(--clay) 20%, transparent);
+    border-radius: 999px;
+  }
+
+  .status-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 22px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    background: var(--positive);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--positive-soft);
+  }
+
+  .number-value {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    color: var(--surface);
+    background: var(--clay);
+    border-radius: 4px;
+  }
+  .checkbox .icon { width: 11px; height: 11px; stroke-width: 3; }
+
+  .value-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    max-width: 100%;
+  }
+  .value-link .icon {
+    width: 11px;
+    height: 11px;
+    color: var(--muted);
+  }
+
+  /* The current viewer renders YAML as an `hr` plus a setext `h2`. */
+  .legacy-view { margin: 0; }
+  .legacy-view > hr:first-child { margin-top: 0; }
+  .legacy-frontmatter { text-wrap: wrap; }
+
+  @media (max-width: 700px) {
+    .demo-bar {
+      align-items: flex-start;
+      padding: 10px 14px;
+    }
+    .demo-brand { padding-top: 5px; }
+    .demo-controls { gap: 6px; }
+    .seg button { padding: 5px 8px; }
+    .doc {
+      width: calc(100% - 32px);
+      padding-top: 28px;
+    }
+    .metadata-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+      padding: 10px 13px;
+    }
+    .metadata-key { min-height: 0; }
+    .metadata-value { margin-left: 21px; }
+    .metadata-count { display: none; }
+    .metadata-head { padding: 10px 13px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<svg class="icon-defs" aria-hidden="true" focusable="false">
+  <symbol id="i-sliders" viewBox="0 0 24 24">
+    <path d="M4 7h10M18 7h2M4 17h2M10 17h10"/>
+    <circle cx="16" cy="7" r="2"/>
+    <circle cx="8" cy="17" r="2"/>
+  </symbol>
+  <symbol id="i-text" viewBox="0 0 24 24">
+    <path d="M5 5h14M12 5v14M9 19h6"/>
+  </symbol>
+  <symbol id="i-list" viewBox="0 0 24 24">
+    <path d="M8 6h13M8 12h13M8 18h13"/>
+    <path d="M3 6h.01M3 12h.01M3 18h.01"/>
+  </symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24">
+    <path d="M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z"/>
+    <circle cx="7.5" cy="7.5" r=".75" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24">
+    <path d="M8 2v4M16 2v4"/>
+    <rect x="3" y="4" width="18" height="18" rx="2"/>
+    <path d="M3 10h18"/>
+  </symbol>
+  <symbol id="i-status" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/>
+    <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24">
+    <path d="M5 9h14M5 15h14M10 3 8 21M16 3l-2 18"/>
+  </symbol>
+  <symbol id="i-toggle" viewBox="0 0 24 24">
+    <rect x="2" y="6" width="20" height="12" rx="6"/>
+    <circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-link" viewBox="0 0 24 24">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+  </symbol>
+  <symbol id="i-external" viewBox="0 0 24 24">
+    <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24">
+    <path d="m5 12 4 4L19 6"/>
+  </symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6"/>
+  </symbol>
+</svg>
+
+<header class="demo-bar">
+  <div class="demo-brand">
+    <span class="demo-dot" aria-hidden="true"></span>
+    <span>Lucid <span class="slash">/</span> <span class="muted">Metadata card</span></span>
+  </div>
+  <div class="demo-controls">
+    <div class="seg" role="group" aria-label="Preview version">
+      <button type="button" data-view="card" aria-pressed="true">Proposed</button>
+      <button type="button" data-view="current" aria-pressed="false">Current</button>
+    </div>
+    <div class="seg" role="group" aria-label="Viewer theme">
+      <button type="button" data-theme-choice="default" aria-pressed="true">Plain</button>
+      <button type="button" data-theme-choice="claude" aria-pressed="false">Claude</button>
+    </div>
+    <div class="seg" role="group" aria-label="Appearance">
+      <button type="button" data-mode-choice="light" aria-pressed="true">Light</button>
+      <button type="button" data-mode-choice="dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
+</header>
+
+<main class="doc" id="content">
+  <details class="metadata-card" open>
+    <summary class="metadata-head">
+      <span class="metadata-heading">
+        <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>
+        <span>Properties</span>
+      </span>
+      <span class="metadata-head-meta">
+        <span class="metadata-count">9 fields</span>
+        <svg class="icon chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </span>
+    </summary>
+
+    <dl class="metadata-list">
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-text"/></svg>
+          <span>title</span>
+        </dt>
+        <dd class="metadata-value">The Quiet Architecture of Reading</dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>
+          <span>aliases</span>
+        </dt>
+        <dd class="metadata-value">
+          <span class="pill-list">
+            <span class="pill">Calm interfaces</span>
+            <span class="pill">Reading in public</span>
+          </span>
+        </dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>
+          <span>tags</span>
+        </dt>
+        <dd class="metadata-value">
+          <span class="tag-list">
+            <span class="tag-pill">#design</span>
+            <span class="tag-pill">#typography</span>
+            <span class="tag-pill">#focus</span>
+          </span>
+        </dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>
+          <span>created</span>
+        </dt>
+        <dd class="metadata-value">Feb 14, 2025</dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-status"/></svg>
+          <span>status</span>
+        </dt>
+        <dd class="metadata-value">
+          <span class="status-value">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>Evergreen</span>
+          </span>
+        </dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-hash"/></svg>
+          <span>rating</span>
+        </dt>
+        <dd class="metadata-value"><span class="number-value">5</span></dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-toggle"/></svg>
+          <span>featured</span>
+        </dt>
+        <dd class="metadata-value">
+          <span class="checkbox" role="img" aria-label="Checked">
+            <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          </span>
+        </dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>
+          <span>source</span>
+        </dt>
+        <dd class="metadata-value">
+          <a class="value-link" href="https://stephango.com/about" target="_blank" rel="noreferrer">
+            <span>https://stephango.com/about</span>
+            <svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>
+          </a>
+        </dd>
+      </div>
+
+      <div class="metadata-row">
+        <dt class="metadata-key">
+          <svg class="icon" aria-hidden="true"><use href="#i-text"/></svg>
+          <span>summary</span>
+        </dt>
+        <dd class="metadata-value text-wrap">Notes on warm surfaces, quiet typography, and the small decisions that let text breathe.</dd>
+      </div>
+    </dl>
+  </details>
+
+  <div class="legacy-view" hidden>
+    <hr>
+    <h2 class="legacy-frontmatter">title: The Quiet Architecture of Reading
+aliases: [Calm interfaces, Reading in public]
+tags: [design, typography, focus]
+created: 2025-02-14
+status: Evergreen
+rating: 5
+featured: true
+source: https://stephango.com/about
+summary: Notes on warm surfaces, quiet typography, and the small decisions that let text breathe.</h2>
+  </div>
+
+  <h1>The Quiet Architecture of Reading</h1>
+  <p>A reading surface should disappear. It should hold the text at a comfortable measure, soften the contrast, and leave enough air that the eye can rest.</p>
+
+  <blockquote>
+    <p>Good typography is invisible until it is missing.</p>
+  </blockquote>
+
+  <p>These notes collect the small decisions behind Lucid's Markdown viewer — the same warm surface, hairline border, and quiet type used by the code blocks. The frontmatter becomes part of the document instead of a debug dump.</p>
+
+  <h2>On warm surfaces</h2>
+  <p>Pure white is bright; pure black is loud. A small amount of warmth makes long reading easier, especially when the page is lit from behind. Metadata should follow the same rule.</p>
+</main>
+
+<script>
+  (() => {
+    const root = document.documentElement;
+    const viewButtons = [...document.querySelectorAll("[data-view]")];
+    const themeButtons = [...document.querySelectorAll("[data-theme-choice]")];
+    const modeButtons = [...document.querySelectorAll("[data-mode-choice]")];
+    const card = document.querySelector(".metadata-card");
+    const legacy = document.querySelector(".legacy-view");
+
+    const press = (buttons, active) => {
+      for (const button of buttons) {
+        button.setAttribute("aria-pressed", String(button === active));
+      }
+    };
+
+    const setView = view => {
+      const current = view === "current";
+      card.hidden = current;
+      legacy.hidden = !current;
+      press(viewButtons, viewButtons.find(button => button.dataset.view === view));
+    };
+
+    const setTheme = theme => {
+      if (theme === "claude") root.setAttribute("data-bt-viewer", "claude");
+      else root.removeAttribute("data-bt-viewer");
+      press(themeButtons, themeButtons.find(button => button.dataset.themeChoice === theme));
+    };
+
+    const setMode = mode => {
+      root.dataset.mode = mode;
+      press(modeButtons, modeButtons.find(button => button.dataset.modeChoice === mode));
+    };
+
+    viewButtons.forEach(button => {
+      button.addEventListener("click", () => setView(button.dataset.view));
+    });
+    themeButtons.forEach(button => {
+      button.addEventListener("click", () => setTheme(button.dataset.themeChoice));
+    });
+    modeButtons.forEach(button => {
+      button.addEventListener("click", () => setMode(button.dataset.modeChoice));
+    });
+
+    const params = new URLSearchParams(location.search);
+    const theme = params.get("theme") === "claude" ? "claude" : "default";
+    const mode = params.get("mode") === "dark" ? "dark" : root.dataset.mode;
+    setTheme(theme);
+    setMode(mode);
+    setView(params.get("view") === "current" ? "current" : "card");
+  })();
+</script>
+</body>
+</html>

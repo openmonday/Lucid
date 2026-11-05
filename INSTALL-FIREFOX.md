@@ -19,6 +19,16 @@ This method is fastest but the extension disappears when you close the browser.
 
 5. The extension is now active. Press **Alt+A** on any page to toggle translation.
 
+## Updating an installed copy
+
+Firefox copies an installed `.xpi` into the browser profile. Editing `dist-firefox/` or rebuilding `lucid.xpi` later does **not** update that installed copy.
+
+- If you are using a temporary add-on, run `npm run build:firefox`, then click **Reload** next to Lucid in `about:debugging`.
+- If you installed from `lucid.xpi`, run `npm run package:firefox`, bump the version in both manifests, then install the new `lucid.xpi` from `about:addons` → ⚙️ → **Install Add-on From File**. If Firefox refuses the reinstall, remove the old Lucid entry first.
+- Close and reopen any Markdown tabs after updating; an already-open viewer keeps the old scripts in memory.
+
+`npm run build` only refreshes the Chrome `dist/` folder. It does not build or package the Firefox version.
+
 ## Permanent Install
 
 Firefox requires all permanently installed extensions to be signed by Mozilla. You have three options:

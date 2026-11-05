@@ -2,6 +2,7 @@ import MarkdownIt from "markdown-it";
 import hljs from "highlight.js/lib/common";
 import { katex as katexPlugin } from "@mdit/plugin-katex";
 import DOMPurify from "dompurify";
+import { createMetadataCard, splitFrontmatter } from "./metadata";
 import { installTranslator } from "./dom-translator";
 
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -158,7 +159,11 @@ function show(text: string, name: string, base?: string) {
     el.href = base;
     document.head.append(el);
   }
-  content.innerHTML = DOMPurify.sanitize(md.render(text), SANITIZE);
+  const { body, metadata } = splitFrontmatter(text);
+  content.innerHTML = DOMPurify.sanitize(md.render(body), SANITIZE);
+  if (metadata && Object.keys(metadata).length > 0) {
+    content.prepend(createMetadataCard(metadata));
+  }
   content.querySelectorAll("a[href]").forEach(a => {
     const href = (a as HTMLAnchorElement).href;
     if (/^https?:/.test(href)) { a.setAttribute("target", "_blank"); a.setAttribute("rel", "noreferrer"); }
