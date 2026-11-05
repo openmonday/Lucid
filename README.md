@@ -18,7 +18,7 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - Works on local `.html` and `.md` files (Chrome needs the "Allow access to file URLs" toggle; Firefox 153+ uses **Access local files on your computer** in `about:addons` → Permissions)
 - Local Markdown files keep their `file://` URL while rendering in the viewer. Firefox/Zen do not let extension pages read `file://` URLs, so the file page's content script passes the text to the viewer
 - Clean, responsive popup with automatic light and dark mode
-- Default/Claude themes for translation text and the Markdown viewer
+- Plain/Claude themes for translation text and the Markdown viewer
 - Translation cache stored locally
 - Target language configurable from the popup or the options page
 
@@ -33,6 +33,23 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 5. Press **Alt+A** on any page to toggle bilingual translation
 
 To change the keyboard shortcut, visit `chrome://extensions/shortcuts`.
+
+### Firefox / Zen
+
+1. Run `npm install && npm run build:firefox`
+2. Open `about:debugging#/runtime/this-firefox` (`about:debugging` in Zen)
+3. Click **Load Temporary Add-on** and select `dist-firefox/manifest.json`
+
+For permanent installation and AMO signing, see [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md). `npm run package:firefox` builds and packages `lucid.xpi`.
+
+## Themes
+
+Translation lines and the Markdown viewer each support two themes, set independently in the popup or on the options page:
+
+- **Plain** (default): a subtle gray rule with page-adaptive text; the viewer uses a neutral gray palette.
+- **Claude**: warm clay tones inspired by Claude.ai, including matching viewer colors.
+
+Both themes follow the system light/dark preference. Settings live in `chrome.storage.sync` under `translationTheme` and `viewerTheme` (`"default"` or `"claude"`), and open pages pick up changes immediately.
 
 ## Structure
 
@@ -59,8 +76,26 @@ static/
   popup.html
   icons/
 build-assets.mjs       Copies the local KaTeX stylesheet and fonts into each build
+build-extension.mjs    Shared esbuild + static-asset build for both browsers
+build-icons.mjs        Rasterizes assets/icon.svg into static/icons
+build-manifest.mjs     Derives the Firefox manifest from static/manifest.json
+build.mjs              Chrome/Edge build into dist/
+build-firefox.mjs      Firefox/Zen build into dist-firefox/
 package-firefox.mjs    Builds and packages the Firefox XPI as lucid.xpi
+test/
+  math.test.mjs        LaTeX delimiter parsing
+  metadata.test.mjs    Frontmatter parsing
 ```
+
+## Development
+
+- `npm run build` — build Chrome/Edge into `dist/`
+- `npm run build:firefox` — build Firefox/Zen into `dist-firefox/`
+- `npm run package:firefox` — build and package `lucid.xpi`
+- `npm run typecheck` — TypeScript check
+- `npm test` — unit tests for the pure parsers in `src/math.ts` and `src/metadata.ts`
+
+Tests run the TypeScript sources directly through Node's built-in test runner and type stripping (Node 22.18 or newer), so there is no test framework dependency.
 
 ## Translation Engine
 
@@ -77,6 +112,13 @@ The UI takes its cues from the Claude Design System; every token is defined in `
 - Warm clay accent (#c6613f light, #e08264 dark)
 - System font stack with CJK fallbacks
 - Smooth transitions and subtle animations
+
+## Troubleshooting
+
+- **`file://` pages are not translated or viewed in Chrome** — open `chrome://extensions`, click **Details** for Lucid, enable **Allow access to file URLs**, then reload the page.
+- **Firefox refuses a permanent install** — stable Firefox and Zen require a signed XPI. Use temporary loading, or follow [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md).
+- **Translation lines do not appear** — check the browser console, confirm network access to `bing.com`, then press Alt+A again.
+- **A Markdown file downloads instead of opening** — grant the extension local-file access, or open the viewer from the options page and choose the file.
 
 ## License
 
