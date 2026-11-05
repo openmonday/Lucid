@@ -24,7 +24,7 @@ This method is fastest but the extension disappears when you close the browser.
 Firefox copies an installed `.xpi` into the browser profile. Editing `dist-firefox/` or rebuilding `lucid.xpi` later does **not** update that installed copy.
 
 - If you are using a temporary add-on, run `npm run build:firefox`, then click **Reload** next to Lucid in `about:debugging`.
-- If you installed from `lucid.xpi`, run `npm run package:firefox`, bump the version in both manifests, then install the new `lucid.xpi` from `about:addons` → ⚙️ → **Install Add-on From File**. If Firefox refuses the reinstall, remove the old Lucid entry first.
+- If you installed from `lucid.xpi`, run `npm run package:firefox`, bump the version in `static/manifest.json`, then install the new `lucid.xpi` from `about:addons` → ⚙️ → **Install Add-on From File**. If Firefox refuses the reinstall, remove the old Lucid entry first.
 - Close and reopen any Markdown tabs after updating; an already-open viewer keeps the old scripts in memory.
 
 `npm run build` only refreshes the Chrome `dist/` folder. It does not build or package the Firefox version.
@@ -73,7 +73,7 @@ This gives you a signed `.xpi` file you can install on any Firefox/Zen, includin
 
 8. Install from `about:addons` → ⚙️ → **Install Add-on From File**
 
-**Important:** Before submitting, change the extension ID in `static/manifest-firefox.json`:
+**Important:** Before submitting, change the extension ID in `build-manifest.mjs`:
 ```json
 "browser_specific_settings": {
   "gecko": {

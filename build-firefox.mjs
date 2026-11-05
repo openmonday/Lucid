@@ -1,27 +1,3 @@
-import { build } from "esbuild";
-import { copyKatex } from "./build-assets.mjs";
-import { cpSync, mkdirSync, rmSync, renameSync } from "node:fs";
+import { buildExtension } from "./build-extension.mjs";
 
-rmSync("dist-firefox", { recursive: true, force: true });
-mkdirSync("dist-firefox", { recursive: true });
-cpSync("static", "dist-firefox", { recursive: true });
-copyKatex("dist-firefox");
-renameSync("dist-firefox/manifest-firefox.json", "dist-firefox/manifest.json");
-
-const options = {
-  entryPoints: {
-    background: "src/background.ts",
-    content: "src/content.ts",
-    "markdown-file": "src/markdown-file.ts",
-    viewer: "src/viewer.ts",
-    options: "src/options.ts",
-    popup: "src/popup.ts",
-  },
-  outdir: "dist-firefox",
-  bundle: true,
-  format: "esm",
-  target: "firefox109",
-  minify: false,
-  logLevel: "info",
-};
-await build(options);
+await buildExtension({ outdir: "dist-firefox", target: "firefox109", firefox: true });

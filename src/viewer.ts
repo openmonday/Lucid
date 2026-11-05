@@ -4,6 +4,7 @@ import { katex as katexPlugin } from "@mdit/plugin-katex";
 import DOMPurify from "dompurify";
 import { createMetadataCard, splitFrontmatter } from "./metadata";
 import { installTranslator } from "./dom-translator";
+import { DEFAULT_THEME } from "./shared";
 
 const LANGUAGE_NAMES: Record<string, string> = {
   bash: "Shell",
@@ -216,7 +217,7 @@ function applyViewerTheme(theme: unknown) {
   if (theme === "claude") document.documentElement.setAttribute("data-bt-viewer", "claude");
   else document.documentElement.removeAttribute("data-bt-viewer");
 }
-chrome.storage.sync.get({ viewerTheme: "default" }).then(v => applyViewerTheme(v.viewerTheme));
+chrome.storage.sync.get({ viewerTheme: DEFAULT_THEME }).then(v => applyViewerTheme(v.viewerTheme));
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "sync" && changes.viewerTheme) applyViewerTheme(changes.viewerTheme.newValue);
 });

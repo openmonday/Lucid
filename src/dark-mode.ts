@@ -1,7 +1,7 @@
 import { installSendMessageRouter } from "./native-messaging";
 import * as DarkReader from "darkreader";
 
-import type { FetchStylesheetRequest, FetchStylesheetResponse } from "./shared";
+import { DEFAULT_DARK_MODE, type FetchStylesheetRequest, type FetchStylesheetResponse } from "./shared";
 
 installSendMessageRouter();
 
@@ -14,11 +14,10 @@ installSendMessageRouter();
  * A page that already has its own dark theme is left completely untouched.
  */
 
-const DEFAULT_ENABLED = true;
 const LEGACY_STYLE_ID = "bt-dark-style";
 const media = matchMedia("(prefers-color-scheme: dark)");
 
-let enabled = DEFAULT_ENABLED;
+let enabled = DEFAULT_DARK_MODE;
 let applied = false;
 let generation = 0;
 
@@ -365,7 +364,7 @@ async function evaluate() {
 }
 
 chrome.storage.sync
-  .get({ darkMode: DEFAULT_ENABLED })
+  .get({ darkMode: DEFAULT_DARK_MODE })
   .then((value) => {
     enabled = value.darkMode !== false;
     void evaluate();

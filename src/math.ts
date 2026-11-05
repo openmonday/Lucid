@@ -9,9 +9,7 @@ export type RichTextPart =
   | { type: "text"; value: string }
   | { type: "math"; value: MathSource };
 
-export type RichReplacement =
-  | { type: "text"; value: string }
-  | { type: "math"; value: MathSource };
+export type RichReplacement = RichTextPart;
 
 /** Placeholders shared with the existing inline-code protection in dom-translator. */
 export const PLACEHOLDER = /\[ZT_KEEP_(\d+)\]/g;

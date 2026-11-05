@@ -1,4 +1,5 @@
 import {
+  DEFAULT_TARGET,
   DEFAULT_THEME,
   DEFAULT_TRANSLATION_SCOPE,
   needsTranslation,
@@ -236,7 +237,7 @@ function scheduleScan() {
 }
 
 async function enable() {
-  const values = await chrome.storage.sync.get({ target: "zh-Hans", translationScope: DEFAULT_TRANSLATION_SCOPE });
+  const values = await chrome.storage.sync.get({ target: DEFAULT_TARGET, translationScope: DEFAULT_TRANSLATION_SCOPE });
   currentTarget = values.target as string;
   scope = values.translationScope === "all" ? "all" : "main";
   enabled = true;

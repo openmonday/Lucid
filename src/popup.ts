@@ -1,4 +1,4 @@
-import { DEFAULT_TARGET, DEFAULT_THEME, DEFAULT_TRANSLATION_SCOPE, LANGUAGES } from "./shared";
+import { DEFAULT_DARK_MODE, DEFAULT_TARGET, DEFAULT_THEME, DEFAULT_TRANSLATION_SCOPE, LANGUAGES } from "./shared";
 
 const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>';
 
@@ -64,11 +64,11 @@ document.getElementById("open-settings")!.addEventListener("click", () => {
 // ---- dark mode switch ----
 const darkSwitch = document.getElementById("dark-switch")!;
 async function loadDark() {
-  const value = await chrome.storage.sync.get({ darkMode: true });
+  const value = await chrome.storage.sync.get({ darkMode: DEFAULT_DARK_MODE });
   darkSwitch.classList.toggle("on", value.darkMode !== false);
 }
 darkSwitch.addEventListener("click", async () => {
-  const value = await chrome.storage.sync.get({ darkMode: true });
+  const value = await chrome.storage.sync.get({ darkMode: DEFAULT_DARK_MODE });
   await chrome.storage.sync.set({ darkMode: value.darkMode === false });
   void loadDark();
 });

@@ -12,6 +12,7 @@ export const LANGUAGES: [string, string][] = [
 ];
 
 export const DEFAULT_THEME = "default";
+export const DEFAULT_DARK_MODE = true;
 export const THEMES: [string, string][] = [
   ["default", "Plain"],
   ["claude", "Claude"],
