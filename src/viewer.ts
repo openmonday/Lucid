@@ -91,6 +91,7 @@ function languageName(code: HTMLElement): string {
 }
 
 async function copyCode(code: HTMLElement, button: HTMLButtonElement) {
+  const label = button.dataset.label ?? button.textContent ?? "";
   const text = code.textContent ?? "";
   try {
     await navigator.clipboard.writeText(text);
@@ -108,7 +109,7 @@ async function copyCode(code: HTMLElement, button: HTMLButtonElement) {
   button.textContent = "Copied";
   button.classList.add("copied");
   setTimeout(() => {
-    button.textContent = "Copy";
+    button.textContent = label;
     button.classList.remove("copied");
   }, 1600);
 }
@@ -122,23 +123,20 @@ function enhanceCodeBlocks() {
     const wrapper = document.createElement("div");
     wrapper.className = "code-block";
 
-    const header = document.createElement("div");
-    header.className = "code-block-header";
-
-    const language = document.createElement("span");
-    language.className = "code-block-language";
-    language.textContent = languageName(code);
-
+    // Obsidian-style header: the language label in the top-right corner is the
+    // copy control, so there is no separate toolbar row above the code.
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "code-block-copy";
-    button.textContent = "Copy";
+    button.className = "code-block-copy notranslate";
+    button.dataset.label = languageName(code);
+    button.textContent = button.dataset.label;
+    button.title = "Copy code";
     button.setAttribute("aria-label", "Copy code to clipboard");
+    button.setAttribute("translate", "no");
     button.addEventListener("click", () => void copyCode(code, button));
 
-    header.append(language, button);
     pre.replaceWith(wrapper);
-    wrapper.append(header, pre);
+    wrapper.append(button, pre);
   });
 }
 
