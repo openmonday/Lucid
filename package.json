@@ -6,7 +6,7 @@
     "build": "node build.mjs",
     "typecheck": "tsc --noEmit",
     "build:firefox": "node build-firefox.mjs",
-    "package:firefox": "npm run build:firefox && rm -f lucid.xpi && cd dist-firefox && zip -qr -X ../lucid.xpi ."
+    "package:firefox": "node package-firefox.mjs"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

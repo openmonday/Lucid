@@ -59,6 +59,7 @@ static/
   popup.html
   icons/
 build-assets.mjs       Copies the local KaTeX stylesheet and fonts into each build
+package-firefox.mjs    Builds and packages the Firefox XPI as lucid.xpi
 ```
 
 ## Translation Engine
