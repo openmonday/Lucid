@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lucid",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Web translation, Markdown viewing, and automatic dark mode.",
   "minimum_chrome_version": "120",
   "permissions": [
@@ -39,6 +39,9 @@
       ],
       "js": [
         "markdown-file.js"
+      ],
+      "css": [
+        "vendor/katex/katex.min.css"
       ],
       "run_at": "document_start"
     }
@@ -79,19 +82,12 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "viewer.css",
         "vendor/katex/katex.min.css",
         "vendor/katex/fonts/*"
       ],
       "matches": [
         "<all_urls>"
-      ]
-    },
-    {
-      "resources": [
-        "viewer.html"
-      ],
-      "matches": [
-        "file:///*"
       ]
     }
   ]

@@ -380,6 +380,12 @@ async function evaluate() {
 
   removeLegacyTheme();
 
+  // Lucid renders local Markdown with the viewer's own light/dark palette.
+  if (document.documentElement.dataset.lucidMarkdown !== undefined) {
+    disableTheme();
+    return;
+  }
+
   if (!enabled || !media.matches) {
     disableTheme();
     return;

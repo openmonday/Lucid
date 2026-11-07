@@ -11,6 +11,11 @@ export function toFirefoxManifest(chromeManifest) {
 
   return {
     ...manifest,
+    // Firefox 153+ hides the "Access local files on your computer" opt-in
+    // unless the extension also declares a file: host permission. Content
+    // scripts matching file:// are not enough to surface the toggle, and
+    // without the opt-in the Markdown content script never runs.
+    host_permissions: [...new Set([...(manifest.host_permissions ?? []), "file:///*"])],
     browser_specific_settings: {
       gecko: {
         id: "lucid@example.com",

@@ -4,10 +4,18 @@ import { build } from "esbuild";
 import { copyKatex } from "./build-assets.mjs";
 import { toFirefoxManifest } from "./build-manifest.mjs";
 
-const ENTRY_POINTS = {
-  background: "src/background.ts",
+// Content scripts share one isolated world per extension in Chrome, so every
+// top-level `var`/function they declare leaks into that shared scope. Two
+// bundled scripts that both include a library (for example KaTeX) would then
+// overwrite each other's internals. Build them as IIFEs to keep all of their
+// declarations private; extension pages and the background script stay ESM.
+const CONTENT_SCRIPTS = {
   content: "src/content.ts",
   "markdown-file": "src/markdown-file.ts",
+};
+
+const MODULE_SCRIPTS = {
+  background: "src/background.ts",
   viewer: "src/viewer.ts",
   options: "src/options.ts",
   popup: "src/popup.ts",
@@ -29,7 +37,16 @@ export async function buildExtension({ outdir, target, firefox = false }) {
   }
 
   await build({
-    entryPoints: ENTRY_POINTS,
+    entryPoints: CONTENT_SCRIPTS,
+    outdir,
+    bundle: true,
+    format: "iife",
+    target,
+    minify: false,
+    logLevel: "info",
+  });
+  await build({
+    entryPoints: MODULE_SCRIPTS,
     outdir,
     bundle: true,
     format: "esm",

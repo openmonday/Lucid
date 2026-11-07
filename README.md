@@ -16,7 +16,7 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - LaTeX math rendered with KaTeX: `$...$`, `$$...$$`, `\(...\)`, `\[...\]`, and fenced `math` blocks
 - Translation keeps LaTeX formulas intact and re-renders them in translation lines
 - Works on local `.html` and `.md` files (Chrome needs the "Allow access to file URLs" toggle; Firefox 153+ uses **Access local files on your computer** in `about:addons` → Permissions)
-- Local Markdown files keep their `file://` URL while rendering in the viewer. Firefox/Zen do not let extension pages read `file://` URLs, so the file page's content script passes the text to the viewer
+- Local Markdown files keep their `file://` URL while rendering in place. The page's content script renders them directly, so relative images and links resolve against the file's own URL; this also works in Firefox/Zen, which never let extension pages load `file://` images
 - Clean, responsive popup with automatic light and dark mode
 - Plain/Claude themes for translation text and the Markdown viewer
 - Translation cache stored locally
@@ -39,6 +39,7 @@ To change the keyboard shortcut, visit `chrome://extensions/shortcuts`.
 1. Run `npm install && npm run build:firefox`
 2. Open `about:debugging#/runtime/this-firefox` (`about:debugging` in Zen)
 3. Click **Load Temporary Add-on** and select `dist-firefox/manifest.json`
+4. Open `about:addons` → **Lucid** → **Permissions** and enable **Access local files on your computer**. Firefox 153+ and Zen do not run content scripts on `file://` pages without this, so local Markdown files stay as raw text and their images do not load. Close and reopen any Markdown tab afterward.
 
 For permanent installation and AMO signing, see [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md). `npm run package:firefox` builds and packages `lucid.xpi`.
 
@@ -62,7 +63,9 @@ src/
   math.ts              LaTeX detection and KaTeX rendering for translations
   dark-mode.ts         Dark Reader dynamic theme + native dark-page detection
   native-messaging.ts  Keeps native runtime messaging working alongside Dark Reader
-  viewer.ts            Markdown viewer page (Markdown-It + KaTeX)
+  viewer.ts            Standalone Markdown viewer page UI
+  render.ts            Markdown-It + KaTeX rendering shared by the viewer and local files
+  viewer-theme.ts      Viewer palette and theme storage sync
   metadata.ts          YAML frontmatter parsing and properties card
   options.ts           Options page
   popup.ts             Toolbar popup (toggle, language, scope, themes)
@@ -116,6 +119,7 @@ The UI takes its cues from the Claude Design System; every token is defined in `
 ## Troubleshooting
 
 - **`file://` pages are not translated or viewed in Chrome** — open `chrome://extensions`, click **Details** for Lucid, enable **Allow access to file URLs**, then reload the page.
+- **Firefox/Zen shows raw Markdown, or rendered Markdown without its images** — open `about:addons` → Lucid → **Permissions**, enable **Access local files on your computer**, then close and reopen the Markdown tab. Also check that `about:debugging` shows the current version (`0.1.3` or newer); reload the temporary add-on after rebuilding.
 - **Firefox refuses a permanent install** — stable Firefox and Zen require a signed XPI. Use temporary loading, or follow [INSTALL-FIREFOX.md](INSTALL-FIREFOX.md).
 - **Translation lines do not appear** — check the browser console, confirm network access to `bing.com`, then press Alt+A again.
 - **A Markdown file downloads instead of opening** — grant the extension local-file access, or open the viewer from the options page and choose the file.
