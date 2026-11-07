@@ -110,6 +110,8 @@ Results are cached in `chrome.storage.local`, keyed by target language and sourc
 
 Page dark mode is powered by [Dark Reader](https://github.com/darkreader/darkreader)'s dynamic theme engine (MIT, see `static/THIRD-PARTY-NOTICES.txt`). Lucid detects pages that already have a dark theme before applying anything, so native dark sites are not double-themed.
 
+Dark Reader normally hands its stylesheet proxy to the page as an inline `<script>`. Chrome's content-script isolated world has its own CSP without `'unsafe-inline'`, so that injection is always blocked there (and Chrome 142+ reports it as an extension error in `chrome://extensions`) while Dark Reader silently polls instead. Lucid drops the doomed insertion on Chromium, which leaves the theme output identical; Firefox applies the page's CSP to such scripts and keeps the proxy.
+
 The UI takes its cues from the Claude Design System; every token is defined in `static/viewer.css`:
 - Deep slate surfaces with crisp borders
 - Warm clay accent (#c6613f light, #e08264 dark)

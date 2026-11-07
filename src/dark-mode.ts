@@ -353,19 +353,54 @@ function waitForStyles(): Promise<void> {
 
 // ---- enable / disable ----
 
+// Dark Reader hands its stylesheet proxy to the page as an inline <script>, a
+// holdover from the MV2 era. Chromium's content-script isolated world has its
+// own CSP (`script-src 'self' 'wasm-unsafe-eval' 'inline-speculation-rules'
+// chrome-extension://…/`) without `'unsafe-inline'`, so that script is always
+// blocked there and Chrome 142+ reports the block as an extension error. The
+// proxy therefore never runs under the embeddable API on Chromium, and skipping
+// the insertion leaves Dark Reader's non-proxy polling path — the one that
+// already runs — untouched. Firefox applies the page's CSP to such scripts and
+// can still run the proxy, so it keeps the default behavior.
+const isFirefox =
+  typeof (globalThis as { browser?: { runtime?: { getBrowserInfo?: unknown } } }).browser
+    ?.runtime?.getBrowserInfo === "function";
+const proxyNeverRuns = !isFirefox;
+
+function isProxyScript(node: Node): boolean {
+  return node instanceof Element && node.classList.contains("darkreader--proxy");
+}
+
+function skipProxyScriptInsertion(): () => void {
+  const head = document.head;
+  const originalInsertBefore = head.insertBefore;
+  head.insertBefore = function <T extends Node>(node: T, child: Node | null): T {
+    if (isProxyScript(node)) return node;
+    return originalInsertBefore.call(head, node, child) as T;
+  };
+  return () => {
+    head.insertBefore = originalInsertBefore;
+  };
+}
+
 function enableTheme() {
   if (applied) return;
-  DarkReader.enable(
-    {
-      mode: 1,
-      brightness: 100,
-      contrast: 100,
-      grayscale: 0,
-      sepia: 0,
-      styleSystemControls: true,
-    },
-    fixesForHost(location.hostname),
-  );
+  const restoreInsertBefore = proxyNeverRuns ? skipProxyScriptInsertion() : null;
+  try {
+    DarkReader.enable(
+      {
+        mode: 1,
+        brightness: 100,
+        contrast: 100,
+        grayscale: 0,
+        sepia: 0,
+        styleSystemControls: true,
+      },
+      fixesForHost(location.hostname),
+    );
+  } finally {
+    restoreInsertBefore?.();
+  }
   applied = true;
 }
 
