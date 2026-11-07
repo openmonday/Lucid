@@ -17,6 +17,40 @@ installSendMessageRouter();
 const LEGACY_STYLE_ID = "bt-dark-style";
 const media = matchMedia("(prefers-color-scheme: dark)");
 
+// Bilibili's comment widgets render into shadow roots whose styles can be
+// created after Dark Reader's pass. Their unprocessed rules keep using the
+// light-theme variables, so comment text stays dark and the comment editor
+// keeps a near-white border. Pin those variables to Dark Reader's values.
+// Adapted from Dark Reader's dynamic-theme-fixes.config (MIT).
+const BILIBILI_FIXES: DarkReader.DynamicThemeFix = {
+  css: `
+:root {
+  --text1: var(--darkreader-neutral-text) !important;
+  --text2: var(--darkreader-text--text2, var(--darkreader-neutral-text)) !important;
+  --bg1: var(--darkreader-neutral-background) !important;
+  --bg3: var(--darkreader-bg--bg3, var(--darkreader-neutral-background)) !important;
+  --brand_blue_thin: var(--darkreader-bg--brand_blue_thin, var(--darkreader-neutral-background)) !important;
+  --graph_bg_thick: var(--darkreader-border--graph_bg_thick, #3e4346) !important;
+  --graph_weak: var(--darkreader-border--graph_weak, #3e4346) !important;
+  --line_regular: var(--darkreader-border--line_regular, #3e4346) !important;
+  --Ga1: var(--darkreader-border--Ga1, #34383a) !important;
+}
+`,
+  invert: [],
+  ignoreInlineStyle: [],
+  ignoreImageAnalysis: [],
+  disableStyleSheetsProxy: false,
+  ignoreCSSUrl: [],
+};
+
+function fixesForHost(hostname: string): DarkReader.DynamicThemeFix | undefined {
+  const host = hostname.toLowerCase();
+  if (host === "bilibili.com" || host.endsWith(".bilibili.com")) {
+    return BILIBILI_FIXES;
+  }
+  return undefined;
+}
+
 let enabled = DEFAULT_DARK_MODE;
 let applied = false;
 let generation = 0;
@@ -321,14 +355,17 @@ function waitForStyles(): Promise<void> {
 
 function enableTheme() {
   if (applied) return;
-  DarkReader.enable({
-    mode: 1,
-    brightness: 100,
-    contrast: 100,
-    grayscale: 0,
-    sepia: 0,
-    styleSystemControls: true,
-  });
+  DarkReader.enable(
+    {
+      mode: 1,
+      brightness: 100,
+      contrast: 100,
+      grayscale: 0,
+      sepia: 0,
+      styleSystemControls: true,
+    },
+    fixesForHost(location.hostname),
+  );
   applied = true;
 }
 
