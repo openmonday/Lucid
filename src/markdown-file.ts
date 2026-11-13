@@ -1,5 +1,5 @@
-import { renderMarkdown } from "./render";
-import { installViewerTheme } from "./viewer-theme";
+import { renderMarkdown } from "./render.ts";
+import { installViewerTheme } from "./viewer-theme.ts";
 
 // Local `.md` files are opened by the browser as plain text. Render the
 // Markdown in place so relative links and images keep resolving against the

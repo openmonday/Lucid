@@ -6,8 +6,8 @@ import {
   type Request,
   type TranslateResponse,
   type TranslationScope,
-} from "./shared";
-import { mathFromElement, PLACEHOLDER, placeholder, renderRichText, splitMath, type RichReplacement } from "./math";
+} from "./shared.ts";
+import { mathFromElement, PLACEHOLDER, placeholder, renderRichText, splitMath, type RichReplacement } from "./math.ts";
 
 const CLASS = "bt-t";
 const SKIP = "script,style,noscript,template,pre,textarea,input,select,svg,math,canvas,iframe,[contenteditable=''],[contenteditable='true'],[translate='no'],.notranslate,.bt-t";

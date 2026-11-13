@@ -19,11 +19,21 @@ export function toFirefoxManifest(chromeManifest) {
     browser_specific_settings: {
       gecko: {
         id: "lucid@example.com",
-        strict_min_version: "109.0",
+        // 142 is the floor for the manifest keys used here: background.type (112),
+        // declarativeNetRequest rule_resources (113), data_collection_permissions
+        // (140 desktop, 142 Android).
+        strict_min_version: "142.0",
+        // Firefox 140+ requires extensions to declare data collection. Page text
+        // is sent to the configured translation engine (Bing, or the user's own
+        // LLM endpoint), so this is required, not optional.
+        data_collection_permissions: { required: ["websiteContent"] },
       },
     },
     background: {
       scripts: ["background.js"],
+      // Firefox applies `type: "module"` to background scripts from 106 on. The
+      // bundle has no top-level import/export statements, so it also loads as a
+      // classic event-page script on browsers that ignore the key.
       type: "module",
     },
     options_ui: {

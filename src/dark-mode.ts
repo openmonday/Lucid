@@ -1,7 +1,7 @@
-import { installSendMessageRouter } from "./native-messaging";
+import { installSendMessageRouter } from "./native-messaging.ts";
 import * as DarkReader from "darkreader";
 
-import { DEFAULT_DARK_MODE, type FetchStylesheetRequest, type FetchStylesheetResponse } from "./shared";
+import { DEFAULT_DARK_MODE, type FetchStylesheetRequest, type FetchStylesheetResponse } from "./shared.ts";
 
 installSendMessageRouter();
 

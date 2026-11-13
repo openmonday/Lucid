@@ -1,9 +1,32 @@
 <!doctype html>
 <html>
 <head><meta charset="utf-8"><title>Lucid Options</title>
-<style>body{font:14px sans-serif;margin:24px;max-width:480px} label{display:block;margin:12px 0}</style></head>
+<style>body{font:14px sans-serif;margin:24px;max-width:480px} label{display:block;margin:12px 0} label.inline{display:flex;gap:6px;align-items:center} fieldset{border:1px solid #ccc;border-radius:6px;margin:16px 0;padding:4px 12px} input:not([type=checkbox]),select{width:100%;box-sizing:border-box;padding:4px} #llm-test-result{white-space:pre-wrap;color:#555;min-height:1.2em}</style></head>
 <body>
 <h2>Lucid</h2>
+<label>Translation engine
+  <select id="engine"></select>
+</label>
+<fieldset id="llm-config">
+  <legend>LLM settings</legend>
+  <label>Base URL
+    <input id="llmBaseUrl" type="url" spellcheck="false" placeholder="https://api.apikey.fan/v1">
+  </label>
+  <label>Model
+    <input id="llmModel" spellcheck="false" placeholder="gpt-6.1-terra">
+  </label>
+  <label>API style
+    <select id="llmApi"></select>
+  </label>
+  <label>API key (stored locally, never synced)
+    <input id="llmApiKey" type="password" spellcheck="false" autocomplete="off" placeholder="sk-...">
+  </label>
+  <label class="inline">
+    <input id="llmFallback" type="checkbox"> Fall back to Microsoft Translator on failure
+  </label>
+  <button id="llm-test" type="button">Test translation</button>
+  <p id="llm-test-result"></p>
+</fieldset>
 <label>Target language
   <select id="target"></select>
 </label>

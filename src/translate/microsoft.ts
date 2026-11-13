@@ -1,6 +1,8 @@
 // Microsoft Translator via the public Bing Translator page.
 // Adapted from agent/plugins/pi-bridge/src/core/translator.ts for an MV3 service worker:
 // the browser cookie jar replaces manual Cookie handling, and Origin/Referer are set by rules.json.
+import type { TranslationProvider } from "./types.ts";
+
 const PAGE = "https://www.bing.com/translator";
 const AUTH_MARGIN = 60_000;
 const AUTH_TIMEOUT = 15_000;
@@ -93,7 +95,15 @@ async function translateText(text: string, target: string): Promise<string> {
   }
 }
 
-export async function translateMany(texts: string[], target: string): Promise<string[]> {
+/** Free default engine: no key, no quota, and the same endpoint as Bing's page. */
+export const microsoftProvider: TranslationProvider = {
+  id: "microsoft",
+  label: "Microsoft Translator",
+  signature: () => "microsoft",
+  translate: translateMany,
+};
+
+async function translateMany(texts: string[], target: string): Promise<string[]> {
   const results = new Array<string>(texts.length);
   let next = 0;
   const worker = async () => {

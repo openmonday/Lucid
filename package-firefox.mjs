@@ -11,7 +11,16 @@ const temp = join(root, "lucid.tmp.xpi");
 process.chdir(root);
 await import("./build-firefox.mjs");
 
-const required = ["manifest.json", "viewer.html", "viewer.js", "viewer.css"];
+const required = [
+  "manifest.json",
+  "viewer.html",
+  "viewer.js",
+  "viewer.css",
+  "background.js",
+  "content.js",
+  "options.html",
+  "options.js",
+];
 for (const file of required) {
   if (!existsSync(join(dist, file))) {
     throw new Error(`Firefox build is missing ${file}; check build-firefox.mjs output.`);
@@ -33,6 +42,14 @@ rmSync(archive, { force: true });
 renameSync(temp, archive);
 
 const manifest = JSON.parse(readFileSync(join(dist, "manifest.json"), "utf8"));
+// Firefox ignores background.service_worker, so a manifest that lost its
+// event-page scripts would package cleanly but never run.
+if (!manifest.background?.scripts?.length) {
+  throw new Error("Firefox manifest must define background.scripts");
+}
+if (!manifest.browser_specific_settings?.gecko?.data_collection_permissions) {
+  throw new Error("Firefox manifest must declare data_collection_permissions (Firefox 140+)");
+}
 const size = (statSync(archive).size / 1024 / 1024).toFixed(2);
 console.log(`\nCreated ${archive}`);
 console.log(`Lucid ${manifest.version} · ${size} MB`);
