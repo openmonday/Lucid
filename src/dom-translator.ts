@@ -18,6 +18,8 @@ const KEEP = "code,kbd,samp";
 const MATH = "math,.katex,mjx-container,.MathJax";
 const CHROME = "nav,aside,form,dialog,menu,[role='navigation'],[role='banner'],[role='contentinfo'],[role='complementary'],[role='search'],[role='menu'],[role='menubar'],[role='toolbar'],[role='dialog'],[aria-hidden='true']";
 const CONTROL = "button,summary,[role='button'],[role='tab'],[role='menuitem'],[role='menuitemcheckbox'],[role='menuitemradio'],[role='option'],[role='switch'],[role='checkbox'],[role='radio'],[role='slider'],[role='spinbutton']";
+// Aquascope renders Rust memory diagrams as HTML and renames its mount point after initialization.
+const DIAGRAM = ".aquascope-embed,.aquascope";
 const MAIN = "main,[role='main']";
 const ARTICLE = "article,[role='article']";
 const LANDMARK = "main,[role='main'],article,[role='article']";
@@ -111,7 +113,7 @@ function isChrome(el: Element): boolean {
 }
 
 function isSkippedInScope(el: Element): boolean {
-  return scope === "main" && (isChrome(el) || el.matches(CONTROL));
+  return scope === "main" && (isChrome(el) || el.matches(`${CONTROL},${DIAGRAM}`));
 }
 
 function isInlineElement(el: Element): boolean {

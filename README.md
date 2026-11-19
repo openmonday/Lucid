@@ -7,7 +7,7 @@ A browser extension that makes web pages easier to read: bilingual translation, 
 - **Alt+A** toggles bilingual translation on the current page (Microsoft Translator by default; an OpenAI-compatible LLM such as `gpt-6.1-terra` can be selected in the options page for coding-heavy pages, with automatic fallback)
 - Terms like *functional core, imperative shell* translate as terminology (函数式核心，命令式外壳) when the LLM engine is on
 - Translates as you scroll — only visible blocks are sent to the translation engine
-- Main-content mode (the default) translates article text while skipping navigation, menus, forms, and buttons; switch to whole-page translation in the popup or options
+- Main-content mode (the default) translates article text while skipping navigation, menus, forms, buttons, and Aquascope diagrams; switch to whole-page translation in the popup or options
 - Automatic dark mode that darkens any web page, following your system preference
 - Pages with their own dark theme (and pages already themed by another dark-mode extension) are left untouched
 - Dark mode can be toggled from the popup
