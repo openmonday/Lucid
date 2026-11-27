@@ -57,70 +57,43 @@ Translation lines and the Markdown viewer each support two themes, set independe
 
 Both themes follow the system light/dark preference. Settings live in `chrome.storage.sync` under `translationTheme` and `viewerTheme` (`"default"` or `"claude"`), and open pages pick up changes immediately.
 
-## Structure
-
-```
-src/
-  translate/           Pluggable engines: provider interface, registry, settings
-    index.ts           Registry, fallback orchestration, cache signature
-    types.ts           TranslationProvider interface and engine settings
-    settings.ts        Engine settings (sync) and API key (local)
-    microsoft.ts       Microsoft Translator via the public Bing page
-    llm.ts             OpenAI-compatible LLM backend (prompt, batching, parsing)
-    glossary.ts        Curated coding terminology used in LLM prompts
-  background.ts        Service worker: translation + cache + toggle command
-  content.ts           Content script entry point
-  dom-translator.ts    DOM walker, content scope, and bilingual insertion
-  math.ts              LaTeX detection and KaTeX rendering for translations
-  dark-mode.ts         Dark Reader dynamic theme + native dark-page detection
-  native-messaging.ts  Keeps native runtime messaging working alongside Dark Reader
-  viewer.ts            Standalone Markdown viewer page UI
-  render.ts            Markdown-It + KaTeX rendering shared by the viewer and local files
-  viewer-theme.ts      Viewer palette and theme storage sync
-  metadata.ts          YAML frontmatter parsing and properties card
-  options.ts           Options page (language, scope, themes, translation engine)
-  popup.ts             Toolbar popup (toggle, language, scope, themes)
-  shared.ts            Shared types and utilities
-static/
-  manifest.json
-  rules.json           declarativeNetRequest rules for Origin/Referer
-  viewer.html
-  viewer.css
-  options.html
-  popup.html
-  icons/
-build-assets.mjs       Copies the local KaTeX stylesheet and fonts into each build
-build-extension.mjs    Shared esbuild + static-asset build for both browsers
-build-icons.mjs        Rasterizes assets/icon.svg into static/icons
-build-manifest.mjs     Derives the Firefox manifest from static/manifest.json
-build.mjs              Chrome/Edge build into dist/
-build-firefox.mjs      Firefox/Zen build into dist-firefox/
-package-firefox.mjs    Builds and packages the Firefox XPI as lucid.xpi
-test/
-  math.test.mjs        LaTeX delimiter parsing
-  metadata.test.mjs    Frontmatter parsing
-```
-
 ## Development
 
 - `npm run build` — build Chrome/Edge into `dist/`
 - `npm run build:firefox` — build Firefox/Zen into `dist-firefox/`
 - `npm run package:firefox` — build and package `lucid.xpi`
 - `npm run typecheck` — TypeScript check
-- `npm test` — unit tests for the pure parsers in `src/math.ts`, `src/metadata.ts`, and `src/translate/`
+- `npm test` — parser, extension messaging, and build tests
 
 Tests run the TypeScript sources directly through Node's built-in test runner and type stripping (Node 22.18 or newer), so there is no test framework dependency.
 
+### Project layout
+
+```text
+src/
+  entrypoints/          Background, content scripts, popup, options, and viewer
+  browser/              Shared message contracts and user preference defaults
+  translation/page/     DOM block extraction and bilingual line rendering
+  translation/engines/  Provider registry, engine settings, and persistent cache
+  dark-mode/            Dark Reader integration and native theme detection
+  markdown/             Rendering, frontmatter, and the viewer palette
+scripts/                Browser builds, icon generation, and Firefox packaging
+static/                 Base manifest, extension pages, styles, and icons
+```
+
+Both builds use `static/manifest.json`; the build derives Firefox's variant. Entrypoint source files can move without changing the bundle names referenced by the manifest or extension pages. To regenerate the checked-in icons from `assets/icon.svg`, run `npm run build:icons`.
+
 ## Translation Engines
 
-Translation is provider-based. `src/translate/index.ts` holds the registry; everything
-above it (background worker, DOM walker, options page) talks to the
-`TranslationProvider` interface in `src/translate/types.ts` and never branches on an
-engine id.
+Translation is provider-based. `src/translation/engines/index.ts` holds the registry
+and fallback logic. The background entrypoint uses the persistent cache and
+translation service without selecting individual providers.
 
 ```
-src/translate/
-  types.ts       TranslationProvider interface, EngineSettings, ConfigError
+src/translation/engines/
+  config.ts      Engine IDs, defaults, and EngineSettings
+  types.ts       TranslationProvider interface and ConfigError
+  cache.ts       Persistent cache for the background entrypoint
   index.ts       registry, fallback orchestration, signature for caching
   settings.ts    load/save engine settings (sync) and API key (local)
   microsoft.ts   Microsoft Translator via the public Bing page (default, free)
@@ -130,14 +103,14 @@ src/translate/
 
 ### Microsoft Translator
 
-`src/translate/microsoft.ts` uses the same neural endpoint as the public Bing page.
+`src/translation/engines/microsoft.ts` uses the same neural endpoint as the public Bing page.
 Session tokens are obtained by loading `https://www.bing.com/translator` once, and
 subsequent requests carry the browser's cookies with `credentials: "include"`.
 `declarativeNetRequest` rewrites `Origin` and `Referer` to the Bing origin.
 
 ### Custom LLM
 
-`src/translate/llm.ts` sends a batch of blocks as one JSON request and asks for
+`src/translation/engines/llm.ts` sends a batch of blocks as one JSON request and asks for
 `{"translations": [...]}` back. Design points:
 
 - **Batching** — up to 12 blocks or 4000 characters per request, two requests in
@@ -171,11 +144,11 @@ first load.
 
 ### Adding an engine
 
-1. Write `src/translate/<name>.ts` exporting a `TranslationProvider`
+1. Write `src/translation/engines/<name>.ts` exporting a `TranslationProvider`
    (`id`, `label`, `signature`, `translate`).
-2. Add the id to `EngineId` and `ENGINES` in `src/shared.ts`; the options page
+2. Add the id to `EngineId` and `ENGINES` in `src/translation/engines/config.ts`; the options page
    renders that list.
-3. Register the provider in `PROVIDERS` (`src/translate/index.ts`).
+3. Register the provider in `PROVIDERS` (`src/translation/engines/index.ts`).
 4. Add prompt/parser unit tests under `test/` if it has a wire format.
 
 For providers that need their own host (beyond the existing `https://*/*` host

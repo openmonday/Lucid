@@ -31,11 +31,13 @@ This method is fastest but the extension disappears when you close the browser.
 Firefox copies an installed `.xpi` into the browser profile. Editing `dist-firefox/` or rebuilding `lucid.xpi` later does **not** update that installed copy.
 
 - If you are using a temporary add-on, run `npm run build:firefox`, then click **Reload** next to Lucid in `about:debugging`. The Lucid entry shows the installed version (`0.2.0` or newer); if it shows an older version you are still running a stale build.
-- If you installed from `lucid.xpi`, run `npm run package:firefox`, bump the version in `static/manifest.json`, then install the new `lucid.xpi` from `about:addons` → ⚙️ → **Install Add-on From File**. If Firefox refuses the reinstall, remove the old Lucid entry first.
+- If you installed from `lucid.xpi`, bump the version in `static/manifest.json`, then run `npm run package:firefox` and install the new `lucid.xpi` from `about:addons` → ⚙️ → **Install Add-on From File**. If Firefox refuses the reinstall, remove the old Lucid entry first.
 - After reinstalling, check **Access local files on your computer** again under `about:addons` → Lucid → **Permissions**; removing an add-on can drop the grant.
 - Close and reopen any Markdown tabs after updating; an already-open page keeps the old content script in memory.
 
-`npm run build` only refreshes the Chrome `dist/` folder. It does not build or package the Firefox version.
+`npm run build` only refreshes the Chrome `dist/` folder. `npm run package:firefox`
+rebuilds `dist-firefox/`, checks the packaged files against the Firefox manifest,
+and uses the system `zip` command to create `lucid.xpi`.
 
 ## Privacy
 
@@ -93,7 +95,7 @@ This gives you a signed `.xpi` file you can install on any Firefox/Zen, includin
 
 8. Install from `about:addons` → ⚙️ → **Install Add-on From File**
 
-**Important:** Before submitting, change the extension ID in `build-manifest.mjs`:
+**Important:** Before submitting, change the extension ID in `scripts/build-manifest.mjs`:
 ```json
 "browser_specific_settings": {
   "gecko": {

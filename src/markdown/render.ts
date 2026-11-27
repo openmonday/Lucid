@@ -2,7 +2,8 @@ import MarkdownIt from "markdown-it";
 import hljs from "highlight.js/lib/common";
 import { katex as katexPlugin } from "@mdit/plugin-katex";
 import DOMPurify from "dompurify";
-import { createMetadataCard, splitFrontmatter } from "./metadata.ts";
+import { splitFrontmatter } from "./frontmatter.ts";
+import { createMetadataCard } from "./metadata-card.ts";
 
 const LANGUAGE_NAMES: Record<string, string> = {
   bash: "Shell",

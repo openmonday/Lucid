@@ -1,14 +1,4 @@
-import type { EngineId, LlmApiStyle } from "../shared.ts";
-
-/** Resolved engine configuration for one translation run. */
-export interface EngineSettings {
-  engine: EngineId;
-  llmBaseUrl: string;
-  llmModel: string;
-  llmApi: LlmApiStyle;
-  llmApiKey: string;
-  llmFallback: boolean;
-}
+import type { EngineId, EngineSettings } from "./config.ts";
 
 /**
  * A translation backend.

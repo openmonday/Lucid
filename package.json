@@ -3,11 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node build.mjs",
+    "build": "node scripts/build.mjs chrome",
+    "build:firefox": "node scripts/build.mjs firefox",
+    "build:icons": "node scripts/build-icons.mjs",
+    "package:firefox": "node scripts/build.mjs package-firefox",
     "typecheck": "tsc --noEmit",
-    "test": "node --test test/",
-    "build:firefox": "node build-firefox.mjs",
-    "package:firefox": "node package-firefox.mjs"
+    "test": "node --test test/"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

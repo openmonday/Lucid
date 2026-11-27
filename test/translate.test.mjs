@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CODING_GLOSSARY, glossaryLines } from "../src/translate/glossary.ts";
+import { CODING_GLOSSARY, glossaryLines } from "../src/translation/engines/glossary.ts";
 import {
   buildSystemPrompt,
   buildUserPayload,
@@ -8,8 +8,8 @@ import {
   parseTranslations,
   placeholderDiff,
   responseText,
-} from "../src/translate/llm.ts";
-import { PROVIDERS, providerFor, signatureFor, translateTexts } from "../src/translate/index.ts";
+} from "../src/translation/engines/llm.ts";
+import { PROVIDERS, providerFor, signatureFor, translateTexts } from "../src/translation/engines/index.ts";
 
 const settings = {
   engine: "llm",

@@ -1,4 +1,4 @@
-import { DEFAULT_THEME } from "./shared.ts";
+import { DEFAULT_THEME } from "../browser/preferences.ts";
 
 function applyViewerTheme(theme: unknown) {
   if (theme === "claude") document.documentElement.setAttribute("data-bt-viewer", "claude");

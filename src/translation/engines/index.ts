@@ -1,12 +1,12 @@
-import type { EngineId } from "../shared.ts";
+import type { EngineId, EngineSettings } from "./config.ts";
 import { llmProvider } from "./llm.ts";
 import { microsoftProvider } from "./microsoft.ts";
-import type { EngineSettings, TranslationProvider } from "./types.ts";
+import type { TranslationProvider } from "./types.ts";
 
 /**
  * Engine registry. To add a backend, write a `TranslationProvider` module and
- * append it here plus to `ENGINES` in `../shared` (the options page renders
- * that list). Nothing else in the extension knows about specific engines.
+ * append it here plus to `ENGINES` in `./config.ts` (the options page renders
+ * that list). Translation callers use the registry rather than choosing providers.
  */
 export const PROVIDERS: readonly TranslationProvider[] = [microsoftProvider, llmProvider];
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { splitMath } from "../src/math.ts";
+import { splitMath } from "../src/translation/page/math.ts";
 
 test("plain text is returned unchanged", () => {
   assert.deepEqual(splitMath("Hello world"), [

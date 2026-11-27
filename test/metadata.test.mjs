@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { splitFrontmatter } from "../src/metadata.ts";
+import { splitFrontmatter } from "../src/markdown/frontmatter.ts";
 
 test("returns the source when frontmatter is absent", () => {
   const source = "# Heading\n\nBody";

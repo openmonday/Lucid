@@ -1,4 +1,5 @@
 import katex from "katex";
+import { PLACEHOLDER } from "../placeholders.ts";
 
 export interface MathSource {
   tex: string;
@@ -10,10 +11,6 @@ export type RichTextPart =
   | { type: "math"; value: MathSource };
 
 export type RichReplacement = RichTextPart;
-
-/** Placeholders shared with the existing inline-code protection in dom-translator. */
-export const PLACEHOLDER = /\[ZT_KEEP_(\d+)\]/g;
-export const placeholder = (index: number) => `[ZT_KEEP_${index}]`;
 
 function isEscaped(text: string, index: number): boolean {
   let slashes = 0;

@@ -1,6 +1,6 @@
-import { installTranslator } from "./dom-translator.ts";
-import { renderMarkdown } from "./render.ts";
-import { installViewerTheme } from "./viewer-theme.ts";
+import { installTranslator } from "../translation/page/dom-translator.ts";
+import { renderMarkdown } from "../markdown/render.ts";
+import { installViewerTheme } from "../markdown/viewer-theme.ts";
 
 const content = document.getElementById("content")!;
 const drop = document.getElementById("drop")!;

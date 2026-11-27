@@ -1,4 +1,5 @@
-import { DEFAULT_DARK_MODE, DEFAULT_TARGET, DEFAULT_THEME, DEFAULT_TRANSLATION_SCOPE, LANGUAGES } from "./shared.ts";
+import { DEFAULT_DARK_MODE, DEFAULT_TARGET, DEFAULT_THEME, DEFAULT_TRANSLATION_SCOPE, LANGUAGES } from "../browser/preferences.ts";
+import type { ExtensionRequest } from "../browser/messages.ts";
 
 const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>';
 
@@ -51,7 +52,7 @@ chrome.commands.getAll().then(commands => {
 
 // ---- translate ----
 document.getElementById("toggle")!.addEventListener("click", () => {
-  void chrome.runtime.sendMessage({ type: "toggle-active" });
+  void chrome.runtime.sendMessage({ type: "toggle-active" } satisfies ExtensionRequest);
   window.close();
 });
 

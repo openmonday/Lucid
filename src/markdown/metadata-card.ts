@@ -1,6 +1,5 @@
-import { CORE_SCHEMA, load, mergeTag } from "js-yaml";
+import { isPlainObject, type Metadata } from "./frontmatter.ts";
 
-type Metadata = Record<string, unknown>;
 type IconName =
   | "sliders"
   | "text"
@@ -16,11 +15,6 @@ type IconName =
   | "chevron"
   | "braces";
 
-export interface FrontmatterResult {
-  body: string;
-  metadata: Metadata | null;
-}
-
 const DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
   year: "numeric",
   month: "short",
@@ -35,9 +29,6 @@ const DATE_TIME_FORMAT = new Intl.DateTimeFormat(undefined, {
 });
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 const DATE_TIME = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?$/;
-const CLOSING_FENCE = /^(?:---|\.\.\.)\s*$/;
-const FRONTMATTER_SCHEMA = CORE_SCHEMA.withTags(mergeTag);
-
 // Icons are static SVG path data; property keys and values never enter it.
 const ICONS: Record<IconName, string> = {
   sliders:
@@ -76,16 +67,6 @@ function icon(name: IconName, className = "metadata-icon"): SVGSVGElement {
   svg.setAttribute("class", className.includes("metadata-icon") ? className : `metadata-icon ${className}`);
   svg.innerHTML = ICONS[name];
   return svg;
-}
-
-function isPlainObject(value: unknown): value is Metadata {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    !Array.isArray(value) &&
-    !(value instanceof Date) &&
-    Object.prototype.toString.call(value) === "[object Object]"
-  );
 }
 
 function isTagKey(key: string): boolean {
@@ -283,29 +264,6 @@ function appendValue(target: HTMLElement, key: string, value: unknown): void {
     return;
   }
   target.textContent = scalarText(value);
-}
-
-export function splitFrontmatter(source: string): FrontmatterResult {
-  const text = source.startsWith("\uFEFF") ? source.slice(1) : source;
-  const lines = text.split(/\r?\n/);
-  if (lines[0]?.trimEnd() !== "---") return { body: source, metadata: null };
-
-  const end = lines.findIndex((line, index) => index > 0 && CLOSING_FENCE.test(line));
-  if (end === -1) return { body: source, metadata: null };
-
-  const raw = lines.slice(1, end).join("\n");
-  if (!raw.trim()) {
-    return { body: lines.slice(end + 1).join("\n"), metadata: null };
-  }
-
-  try {
-    const value = load(raw, { schema: FRONTMATTER_SCHEMA });
-    if (!isPlainObject(value)) return { body: source, metadata: null };
-    return { body: lines.slice(end + 1).join("\n"), metadata: value };
-  } catch {
-    // Keep the original Markdown visible if the YAML is malformed.
-    return { body: source, metadata: null };
-  }
 }
 
 export function createMetadataCard(metadata: Metadata): HTMLElement {

@@ -1,6 +1,8 @@
-import { LANGUAGES } from "../shared.ts";
+import { LANGUAGES } from "../../browser/preferences.ts";
+import { PLACEHOLDER } from "../placeholders.ts";
 import { glossaryLines } from "./glossary.ts";
-import { ConfigError, type EngineSettings, type TranslationProvider } from "./types.ts";
+import type { EngineSettings } from "./config.ts";
+import { ConfigError, type TranslationProvider } from "./types.ts";
 
 /**
  * LLM backend speaking either the OpenAI Responses API or the older chat
@@ -18,7 +20,6 @@ const MAX_CHARS = 4_000;
 const CONCURRENCY = 2;
 const TIMEOUT = 45_000;
 const RETRY_DELAY = 800;
-const PLACEHOLDER = /\[ZT_KEEP_\d+]/g;
 
 function languageName(target: string): string {
   return LANGUAGES.find(([code]) => code === target)?.[1] ?? target;

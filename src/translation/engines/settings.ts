@@ -5,10 +5,8 @@ import {
   DEFAULT_LLM_FALLBACK,
   DEFAULT_LLM_MODEL,
   LLM_API_KEY_KEY,
-  type EngineId,
-  type LlmApiStyle,
-} from "../shared.ts";
-import type { EngineSettings } from "./types.ts";
+  type EngineSettings,
+} from "./config.ts";
 
 /**
  * Settings live in two places on purpose:
@@ -52,5 +50,3 @@ export async function saveEngineSettings(settings: EngineSettings): Promise<void
   });
   await chrome.storage.local.set({ [LLM_API_KEY_KEY]: settings.llmApiKey.trim() });
 }
-
-export type { EngineId, LlmApiStyle };

@@ -5,7 +5,7 @@
 // stylesheet-fetch messages through its shim.
 type SendMessage = (...args: any[]) => any;
 
-export const nativeSendMessage = chrome.runtime.sendMessage.bind(
+const nativeSendMessage = chrome.runtime.sendMessage.bind(
   chrome.runtime,
 ) as SendMessage;
 

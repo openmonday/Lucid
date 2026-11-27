@@ -1,10 +1,9 @@
 // Rasterize assets/icon.svg into the PNG sizes the extension manifest needs.
-// Run: node build-icons.mjs. Builds copy static/ into each output folder, so
-// static/icons is the only place this script needs to write.
-import { Resvg } from "@resvg/resvg-js";
+// Run: npm run build:icons. Builds copy static/ into each output directory.
 import { readFileSync, writeFileSync } from "node:fs";
+import { Resvg } from "@resvg/resvg-js";
 
-const svg = readFileSync("assets/icon.svg", "utf8");
+const svg = readFileSync(new URL("../assets/icon.svg", import.meta.url), "utf8");
 const sizes = [16, 32, 48, 128];
 
 for (const size of sizes) {
@@ -14,6 +13,6 @@ for (const size of sizes) {
   })
     .render()
     .asPng();
-  writeFileSync(`static/icons/${size}.png`, png);
+  writeFileSync(new URL(`../static/icons/${size}.png`, import.meta.url), png);
   console.log(`icon ${size}x${size}`);
 }

@@ -2,16 +2,13 @@ import {
   DEFAULT_TARGET,
   DEFAULT_THEME,
   DEFAULT_TRANSLATION_SCOPE,
-  ENGINES,
   LANGUAGES,
-  LLM_APIS,
   THEMES,
   TRANSLATION_SCOPES,
-  type EngineId,
-  type LlmApiStyle,
-  type TranslateResponse,
-} from "./shared.ts";
-import { loadEngineSettings, saveEngineSettings } from "./translate/settings.ts";
+} from "../browser/preferences.ts";
+import type { ExtensionRequest, TranslateResponse } from "../browser/messages.ts";
+import { ENGINES, LLM_APIS, type EngineId, type LlmApiStyle } from "../translation/engines/config.ts";
+import { loadEngineSettings, saveEngineSettings } from "../translation/engines/settings.ts";
 
 const select = document.getElementById("target") as HTMLSelectElement;
 const scope = document.getElementById("translationScope") as HTMLSelectElement;
@@ -67,7 +64,7 @@ testButton.addEventListener("click", async () => {
     const response: TranslateResponse = await chrome.runtime.sendMessage({
       type: "translate",
       texts: ["Functional Core, Imperative Shell"],
-    });
+    } satisfies ExtensionRequest);
     testResult.textContent = response.ok
       ? response.translations[0]
       : `Failed: ${response.error}`;
